@@ -351,7 +351,8 @@
         "range": 3,
         "ranges": [ [ 0, 3, "BURST" ] ]
       }
-    ]
+    ],
+    "extend": { "flags": [ "DROPS_AMMO" ] }
   },
   {
     "id": "mon_utilibot_fire",
@@ -377,7 +378,7 @@
         "ranges": [ [ 0, 5, "BURST" ] ]
       }
     ],
-    "extend": { "flags": [ "FIREPROOF", "BASHES" ] }
+    "extend": { "flags": [ "FIREPROOF", "BASHES", "DROPS_AMMO" ] }
   },
   {
     "id": "mon_utilibot_blob",
@@ -444,7 +445,7 @@
       }
     ],
     "death_drops": { "groups": [ [ "broken_robots", 1 ], [ "beehive", 1 ] ] },
-    "extend": { "flags": [ "STUMBLES" ] }
+    "extend": { "flags": [ "STUMBLES", "DROPS_AMMO" ] }
   },
   {
     "id": "mon_medibot",
@@ -640,7 +641,7 @@
         "range": 10,
         "ranges": [ [ 0, 10, "DEFAULT" ] ]
       }
-    ]
+    ],
   },
   {
     "id": "mon_broken_cyborg",
@@ -706,7 +707,8 @@
         "range": 8,
         "ranges": [ [ 0, 8, "DEFAULT" ] ]
       }
-    ]
+    ],
+    "extend": { "flags": [ "DROPS_AMMO" ] }
   },
   {
     "abstract": "mon_milbot_base",
@@ -775,7 +777,8 @@
         "targeting_volume": 10
       }
     ],
-    "death_drops": { "groups": [ [ "broken_robots", 1 ], [ "milbot_trainer", 1 ] ] }
+    "death_drops": { "groups": [ [ "broken_robots", 1 ], [ "milbot_trainer", 1 ] ] },
+    "extend": { "flags": [ "DROPS_AMMO" ] }
   },
   {
     "id": "mon_milbot_556",
@@ -806,7 +809,8 @@
         "targeting_sound": "\"Hostile Detected.\"",
         "targeting_volume": 10
       }
-    ]
+    ],
+    "extend": { "flags": [ "DROPS_AMMO" ] }
   },
   {
     "id": "mon_milbot_308",
@@ -839,7 +843,8 @@
         "targeting_sound": "\"Hostile Detected.\"",
         "targeting_volume": 10
       }
-    ]
+    ],
+    "extend": { "flags": [ "DROPS_AMMO" ] }
   },
   {
     "id": "mon_milbot_50bmg",
@@ -850,7 +855,7 @@
     "diff": 30,
     "melee_damage": [ { "damage_type": "electric", "amount": 6 } ],
     "luminance": 100,
-    "starting_ammo": { "50bmg": 100 },
+    "starting_ammo": { "50bmg": 400 },
     "special_attacks": [
       {
         "type": "gun",
@@ -871,7 +876,8 @@
         "targeting_sound": "\"Hostile Detected.\"",
         "targeting_volume": 10
       }
-    ]
+    ],
+    "extend": { "flags": [ "DROPS_AMMO" ] }
   },
   {
     "id": "mon_milbot_8x40mm",
@@ -903,7 +909,8 @@
         "targeting_sound": "\"Hostile Detected.\"",
         "targeting_volume": 10
       }
-    ]
+    ],
+    "extend": { "flags": [ "DROPS_AMMO" ] }
   },
   {
     "id": "mon_milbot_needle",
@@ -935,7 +942,8 @@
         "targeting_sound": "\"Hostile Detected.\"",
         "targeting_volume": 10
       }
-    ]
+    ],
+    "extend": { "flags": [ "DROPS_AMMO" ] }
   },
   {
     "id": "mon_milbot_40mm",
@@ -968,7 +976,8 @@
         "targeting_sound": "\"Hostile Detected.\"",
         "targeting_volume": 10
       }
-    ]
+    ],
+    "extend": { "flags": [ "DROPS_AMMO" ] }
   },
   {
     "id": "mon_milbot_flame",
@@ -999,7 +1008,8 @@
         "targeting_sound": "\"Hostile Detected.\"",
         "targeting_volume": 10
       }
-    ]
+    ],
+    "extend": { "flags": [ "DROPS_AMMO" ] }
   },
   {
     "abstract": "mon_advbot_base",
@@ -1195,7 +1205,8 @@
         "range": 3,
         "ranges": [ [ 0, 3, "DEFAULT" ] ]
       }
-    ]
+    ],
+    "extend": { "flags": [ "DROPS_AMMO" ] }
   },
   {
     "id": "mon_defbot_samurai",
@@ -1259,7 +1270,7 @@
         "ranges": [ [ 0, 10, "DEFAULT" ] ]
       }
     ],
-    "extend": { "flags": [ "FIREPROOF" ] }
+    "extend": { "flags": [ "FIREPROOF", "DROPS_AMMO" ] }
   },
   {
     "id": "mon_milbot_gaurdian",
@@ -1289,7 +1300,8 @@
         "range": "10",
         "ranges": [ [ 0, 10, "AUTO" ] ]
       }
-    ]
+    ],
+    "extend": { "flags": [ "DROPS_AMMO" ] }
   },
   {
     "id": "mon_milbot_deluxe",
@@ -1329,7 +1341,8 @@
         "ranges": [ [ 0, 16, "BURST" ] ],
         "require_targeting_player": true
       }
-    ]
+    ],
+    "extend": { "flags": [ "DROPS_AMMO" ] }
   },
   {
     "id": "mon_milbot_defender",
@@ -1367,7 +1380,8 @@
         "targeting_sound": "\"Hostile Detected.\"",
         "targeting_volume": 10
       }
-    ]
+    ],
+    "extend": { "flags": [ "DROPS_AMMO" ] }
   },
   {
     "id": "mon_advbot_glitter",
@@ -1394,7 +1408,8 @@
         "range": 5,
         "ranges": [ [ 0, 5, "AUTO" ] ]
       }
-    ]
+    ],
+    "extend": { "flags": [ "DROPS_AMMO" ] }
   },
   {
     "id": "mon_advbot_bitter",
