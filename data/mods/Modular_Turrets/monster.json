@@ -18,7 +18,7 @@
     "armor_acid": 14,
     "death_function": [ "BROKEN" ],
     "death_drops": "broken_robots",
-    "flags": [ "SEES", "NOHEAD", "ELECTRONIC", "IMMOBILE", "NO_BREATHE", "DROPS_AMMO" ]
+    "flags": [ "SEES", "NOHEAD", "ELECTRONIC", "IMMOBILE", "NO_BREATHE" ]
   },
   {
     "id": "mon_turret_disarmed",
@@ -433,7 +433,6 @@
         "targeting_volume": 20
       }
     ]
-    "flags": [ "SEES", "NOHEAD", "ELECTRONIC", "IMMOBILE", "NO_BREATHE" ]
   },
   {
     "id": "mon_advturret_acid",
@@ -460,7 +459,6 @@
         "ranges": [ [ 0, 20, "DEFAULT" ] ]
       }
     ]
-    "flags": [ "SEES", "NOHEAD", "ELECTRONIC", "IMMOBILE", "NO_BREATHE" ]
   },
   {
     "id": "mon_advturret_plasma",
@@ -492,7 +490,7 @@
         "targeting_volume": 10
       }
     ],
-    "flags": [ "SEES", "NOHEAD", "ELECTRONIC", "IMMOBILE", "NO_BREATHE", "FIREPROOF" ]
+    "extend": { "flags": [ "FIREPROOF" ] }
   },
   {
     "id": "mon_advturret_rail",
@@ -558,7 +556,7 @@
         "targeting_volume": 10
       }
     ],
-    "flags": [ "SEES", "NOHEAD", "ELECTRONIC", "IMMOBILE", "NO_BREATHE", "ELECTRIC" ]
+    "extend": { "flags": [ "ELECTRIC" ] }
   },
   {
     "id": "mon_advturret_emp",
@@ -589,7 +587,7 @@
         "targeting_volume": 10
       }
     ],
-    "flags": [ "SEES", "NOHEAD", "ELECTRONIC", "IMMOBILE", "NO_BREATHE", "ELECTRIC" ]
+    "extend": { "flags": [ "ELECTRIC" ] }
   },
   {
     "id": "mon_turret_gnome",
