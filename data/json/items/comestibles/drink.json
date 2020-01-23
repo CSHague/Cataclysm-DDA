@@ -26,7 +26,7 @@
   {
     "type": "COMESTIBLE",
     "id": "almond_milk",
-    "name": "almond milk",
+    "name": { "str": "almond milk" },
     "weight": "258 g",
     "color": "white",
     "spoils_in": "3 days",
@@ -849,6 +849,25 @@
   },
   {
     "type": "COMESTIBLE",
+    "id": "rehydration_drink",
+    "name": "rehydration drink",
+    "weight": "257 g",
+    "color": "light_cyan",
+    "container": "bottle_plastic",
+    "comestible_type": "DRINK",
+    "symbol": "~",
+    "quench": 60,
+    "calories": 12,
+    "description": "A basic oral rehydration therapy drink.  It will rehydrate you faster than water, but it tastes kind of strange.",
+    "price": 55,
+    "material": "water",
+    "volume": "250 ml",
+    "looks_like": "sports_drink",
+    "phase": "liquid",
+    "fun": -2
+  },
+  {
+    "type": "COMESTIBLE",
     "id": "sweet_water",
     "name": "sweet water",
     "name_plural": "sweet water",
@@ -937,7 +956,8 @@
     "name": "clean water",
     "name_plural": "clean water",
     "description": "Fresh, clean water.  Truly the best thing to quench your thirst.",
-    "color": "light_cyan"
+    "color": "light_cyan",
+    "use_action": [  ]
   },
   {
     "id": "water_mineral",
@@ -948,6 +968,7 @@
     "description": "Fancy mineral water, so fancy it makes you feel fancy just holding it.",
     "container": "bottle_plastic",
     "proportional": { "quench": 1.2 },
-    "relative": { "fun": 1 }
+    "relative": { "fun": 1 },
+    "use_action": [  ]
   }
 ]

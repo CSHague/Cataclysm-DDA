@@ -6,9 +6,7 @@
 #include <vector>
 
 #include "calendar.h"
-#include "cursesdef.h"
 
-class player;
 class JsonObject;
 
 // Don't change those! They must stay in this specific order!
@@ -29,7 +27,7 @@ enum computer_action {
     COMPACT_MAPS,
     COMPACT_MAP_SEWER,
     COMPACT_MAP_SUBWAY,
-    COMPACT_MISS_LAUNCH,
+    COMPACT_OBSOLETE, // No longer used
     COMPACT_MISS_DISARM,
     COMPACT_LIST_BIONICS,
     COMPACT_ELEVATOR_ON,
@@ -66,7 +64,6 @@ enum computer_action {
     COMPACT_RADIO_ARCHIVE,
     NUM_COMPUTER_ACTIONS
 };
-
 // Don't change those! They must stay in this specific order!
 // TODO: Remove this enum
 enum computer_failure_type {
@@ -84,10 +81,6 @@ enum computer_failure_type {
     NUM_COMPUTER_FAILURES
 };
 
-// TODO: Turn the enum into id, get rid of this
-computer_action computer_action_from_string( const std::string &str );
-computer_failure_type computer_failure_type_from_string( const std::string &str );
-
 struct computer_option {
     std::string name;
     computer_action action;
@@ -96,7 +89,7 @@ struct computer_option {
     computer_option();
     computer_option( const std::string &N, computer_action A, int S );
 
-    static computer_option from_json( JsonObject &jo );
+    static computer_option from_json( const JsonObject &jo );
 };
 
 struct computer_failure {
@@ -105,7 +98,7 @@ struct computer_failure {
     computer_failure( computer_failure_type t ) : type( t ) {
     }
 
-    static computer_failure from_json( JsonObject &jo );
+    static computer_failure from_json( const JsonObject &jo );
 };
 
 class computer
@@ -123,14 +116,6 @@ class computer
         void add_failure( const computer_failure &failure );
         void add_failure( computer_failure_type failure );
         void set_access_denied_msg( const std::string &new_msg );
-        // Basic usage
-        /** Shutdown (free w_terminal, etc.) */
-        void shutdown_terminal();
-        /** Handles player use of a computer */
-        void use();
-        /** Returns true if the player successfully hacks the computer. Security = -1 defaults to
-         *  the main system security. */
-        bool hack_attempt( player &p, int Security = -1 );
         // Save/load
         std::string save_data() const;
         void load_data( const std::string &data );
@@ -138,6 +123,7 @@ class computer
         std::string name; // "Jon's Computer", "Lab 6E77-B Terminal Omega"
         int mission_id; // Linked to a mission?
 
+        friend class computer_session;
     private:
         // Difficulty of simply logging in
         int security;
@@ -151,50 +137,10 @@ class computer
         // Can be customized to for example warn the player of potentially lethal
         // consequences like secubots spawning.
         std::string access_denied;
-        // Output window
-        catacurses::window w_terminal;
-        // Pretty border
-        catacurses::window w_border;
         // Misc research notes from json
         static std::vector<std::string> lab_notes;
 
-        // Called by use()
-        void activate_function( computer_action action );
-        // Generally called when we fail a hack attempt
-        void activate_random_failure();
-        // ...but we can also choose a specific failure.
-        void activate_failure( computer_failure_type fail );
-
         void remove_option( computer_action action );
-
-        void mark_refugee_center();
-
-        // OUTPUT/INPUT:
-
-        // Reset to a blank terminal (e.g. at start of usage loop)
-        void reset_terminal();
-        // Prints a line to the terminal (with printf flags)
-        template<typename ...Args>
-        void print_line( const char *text, Args &&... args );
-        // For now, the same as print_line but in red ( TODO: change this?)
-        template<typename ...Args>
-        void print_error( const char *text, Args &&... args );
-        // Wraps and prints a block of text with a 1-space indent
-        template<typename ...Args>
-        void print_text( const char *text, Args &&... args );
-        // Prints code-looking gibberish
-        void print_gibberish_line();
-        // Prints a line and waits for Y/N/Q
-        template<typename ...Args>
-        char query_ynq( const char *text, Args &&... args );
-        // Same as query_ynq, but returns true for y or Y
-        template<typename ...Args>
-        bool query_bool( const char *text, Args &&... args );
-        // Simply wait for any key, returns True
-        template<typename ...Args>
-        bool query_any( const char *text, Args &&... args );
-        // Move the cursor to the beginning of the next line
-        void print_newline();
 };
 
 #endif

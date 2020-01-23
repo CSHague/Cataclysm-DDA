@@ -166,6 +166,26 @@
     "flags": [ "TRADER_AVOID" ]
   },
   {
+    "id": "bag_iv",
+    "type": "CONTAINER",
+    "category": "container",
+    "name": "IV bag",
+    "description": "A small, sealed plastic bag for liquids used in intravenous therapy.",
+    "looks_like": "bag_plastic",
+    "weight": "10 g",
+    "volume": 0,
+    "price": 0,
+    "to_hit": -1,
+    "rigid": false,
+    "material": "plastic",
+    "symbol": ")",
+    "color": "light_gray",
+    "contains": "500 ml",
+    "seals": true,
+    "watertight": true,
+    "flags": [ "TRADER_AVOID" ]
+  },
+  {
     "id": "bottle_glass",
     "type": "CONTAINER",
     "category": "container",
@@ -1111,7 +1131,7 @@
     "name": "plastic tub",
     "description": "A big, square plastic bucket usually used for carrying ice cream.",
     "weight": "1360 g",
-    "volume": "4 L",
+    "volume": "4500 ml",
     "price": 10,
     "price_postapoc": 100,
     "material": "plastic",
@@ -1139,6 +1159,15 @@
     "watertight": true,
     "seals": true,
     "properties": [ [ "burst_when_filled", "75" ] ]
+  },
+  {
+    "id": "balloon",
+    "type": "CONTAINER",
+    "category": "other",
+    "looks_like": "condom",
+    "name": "balloon",
+    "description": "A child's balloon.  This could be used as a makeshift water container.",
+    "copy-from": "condom"
   },
   {
     "id": "can_food_big",
@@ -1173,9 +1202,9 @@
     "id": "survival_kit_box",
     "type": "CONTAINER",
     "category": "container",
-    "name": "survival kit box",
+    "name": { "str": "survival kit box", "str_pl": "survival kit boxes" },
     "description": "An aluminum box that used to contain a small survival kit.  Can hold 1 liter of liquid.",
-    "weight": 200,
+    "weight": "200 g",
     "volume": "1 L",
     "price": 0,
     "material": "aluminum",

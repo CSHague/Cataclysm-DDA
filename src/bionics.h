@@ -83,6 +83,8 @@ struct bionic_data {
     units::mass weight_capacity_bonus;
     /**Map of stats and their corresponding bonuses passively granted by a bionic*/
     std::map<Character::stat, int> stat_bonus;
+    /**This bionic draws power through a cable*/
+    bool is_remote_fueled = false;
     /**Fuel types that can be used by this bionic*/
     std::vector<itype_id> fuel_opts;
     /**How much fuel this bionic can hold*/
@@ -158,9 +160,9 @@ struct bionic {
             return *id;
         }
 
-        void set_flag( std::string flag );
-        void remove_flag( std::string flag );
-        bool has_flag( std::string flag ) const ;
+        void set_flag( const std::string &flag );
+        void remove_flag( const std::string &flag );
+        bool has_flag( const std::string &flag ) const;
 
         int get_quality( const quality_id &quality ) const;
 
@@ -193,7 +195,7 @@ void check_bionics();
 void finalize_bionics();
 void reset_bionics();
 // load a bionic from JSON
-void load_bionic( JsonObject &jsobj );
+void load_bionic( const JsonObject &jsobj );
 char get_free_invlet( player &p );
 std::string list_occupied_bps( const bionic_id &bio_id, const std::string &intro,
                                bool each_bp_on_new_line = true );

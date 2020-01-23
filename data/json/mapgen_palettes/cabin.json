@@ -7,9 +7,9 @@
       "+": [ [ "t_door_c", 3 ], "t_door_locked" ],
       "=": "t_door_c",
       "-": "t_fence",
-      ".": [ [ "t_grass", 3 ], "t_dirt", "t_grass_long" ],
-      "~": [ [ "t_dirt", 3 ], "t_grass" ],
-      "*": [ [ "t_grass", 10 ], [ "t_grass_long", 5 ], "t_shrub" ],
+      ".": [ [ "t_region_groundcover", 4 ], "t_region_groundcover_forest" ],
+      "~": [ [ "t_dirt", 3 ], "t_region_groundcover" ],
+      "*": [ [ "t_region_groundcover", 15 ], "t_region_shrub" ],
       "G": "t_fencegate_c",
       "o": "t_column",
       "P": "t_water_pump",
@@ -20,7 +20,9 @@
       "W": [ [ "t_window_boarded", 2 ], "t_window" ],
       "%": "t_gutter_downspout",
       "q": "t_swater_sh",
-      "Q": "t_water_dp"
+      "Q": "t_water_dp",
+      "H": "t_chickenwire_gate_c",
+      "I": "t_chickenwire_fence"
     },
     "furniture": {
       "a": "f_armchair",
@@ -63,8 +65,8 @@
       "B": { "item": "bed", "chance": 60 },
       "d": [ { "item": "livingroom", "chance": 40 }, { "item": "office", "chance": 40 } ],
       "D": [
-        { "item": "dresser_mens", "chance": 50, "repeat": [ 1, 4 ] },
-        { "item": "dresser_womens", "chance": 50, "repeat": [ 1, 4 ] }
+        { "item": "SUS_dresser_mens", "chance": 50, "repeat": [ 1, 4 ] },
+        { "item": "SUS_dresser_womens", "chance": 50, "repeat": [ 1, 4 ] }
       ],
       "F": { "item": "fridge", "chance": 35, "repeat": [ 1, 14 ] },
       "h": { "item": "shower", "chance": 20 },

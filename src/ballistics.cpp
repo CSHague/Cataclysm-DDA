@@ -34,7 +34,7 @@
 #include "type_id.h"
 #include "point.h"
 
-const efftype_id effect_bounced( "bounced" );
+static const efftype_id effect_bounced( "bounced" );
 
 static void drop_or_embed_projectile( const dealt_projectile_attack &attack )
 {
@@ -73,7 +73,7 @@ static void drop_or_embed_projectile( const dealt_projectile_attack &attack )
             g->m.add_item_or_charges( pt, i );
         }
 
-        //TODO: Sound
+        // TODO: Sound
         return;
     }
 
