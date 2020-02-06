@@ -5,7 +5,7 @@
     "symbol": ",",
     "looks_like": "bot_turret",
     "color": "light_gray",
-    "name": "broken turret",
+    "name": { "str": "broken turret", "str_pl": "broken turrets" },
     "category": "other",
     "description": "A broken turret.  Much less threatening now that it lies limp on solid ground.  Could be gutted for parts.",
     "price": 50000,
@@ -21,7 +21,7 @@
     "abstract": "broken_milturret_base",
     "type": "GENERIC",
     "copy-from": "broken_turret_base",
-    "name": "broken military turret",
+    "name": { "str": "broken military turret", "str_pl": "broken military turrets" },
     "price": 50000,
     "price_postapoc": 10000
   },
@@ -29,7 +29,7 @@
     "abstract": "broken_advturret_base",
     "type": "GENERIC",
     "copy-from": "broken_turret_base",
-    "name": "broken advanced turret",
+    "name": { "str": "broken advanced turret", "str_pl": "broken abvanced turrets" },
     "price": 50000,
     "price_postapoc": 10000
   },
@@ -38,7 +38,7 @@
     "type": "GENERIC",
     "copy-from": "broken_turret_base",
     "color": "light_gray",
-    "name": "broken defense turret",
+    "name": { "str": "broken defense turret", "str_pl": "broken defense turrets" },
     "description": "A broken defense turret.  Much less threatening now that it lies limp on solid ground.  Could be gutted for parts."
   },
   {
@@ -46,7 +46,7 @@
     "type": "GENERIC",
     "copy-from": "broken_milturret_base",
     "color": "light_gray",
-    "name": "broken military turret",
+    "name": { "str": "broken military turret", "str_pl": "broken military turrets" },
     "description": "A broken military turret.  Much less threatening now that it lies limp on solid ground.  Could be gutted for parts."
   },
   {
@@ -54,15 +54,15 @@
     "type": "GENERIC",
     "copy-from": "broken_turret_base",
     "color": "light_gray",
-    "name": "broken advanced turret",
-    "description": "A broken 9mm defense turret.  Much less threatening now that it lies limp on solid ground.  Could be gutted for parts."
+    "name": { "str": "broken advanced turret", "str_pl": "broken advanced turrets" },
+    "description": "A broken advanced defense turret.  Much less threatening now that it lies limp on solid ground.  Could be gutted for parts."
   },
   {
     "id": "broken_turret_9mm",
     "type": "GENERIC",
     "copy-from": "broken_turret_base",
     "color": "light_gray",
-    "name": "broken 9mm turret",
+    "name": { "str": "broken 9mm turret", "str_pl": "broken 9mm turrets" },
     "description": "A broken 9mm defense turret.  Much less threatening now that it lies limp on solid ground.  Could be gutted for parts."
   },
   {
@@ -70,15 +70,15 @@
     "type": "GENERIC",
     "copy-from": "broken_turret_base",
     "color": "light_gray",
-    "name": "broken 9mm turret",
-    "description": "A broken 9mm defense turret.  Much less threatening now that it lies limp on solid ground.  Could be gutted for parts."
+    "name": { "str": "broken turret", "str_pl": "broken turrets" },
+    "description": "A broken turret.  Much less threatening now that it lies limp on solid ground.  Could be gutted for parts."
   },
   {
     "id": "broken_turret_shot",
     "type": "GENERIC",
     "copy-from": "broken_turret_base",
     "color": "red",
-    "name": "broken 9mm turret",
+    "name": { "str": "broken shotgun turret", "str_pl": "broken shotgun turrets" },
     "description": "A broken shotgun defense turret.  Much less threatening now that it lies limp on solid ground.  Could be gutted for parts."
   },
   {
@@ -86,7 +86,7 @@
     "type": "GENERIC",
     "copy-from": "broken_turret_base",
     "color": "blue",
-    "name": "broken riot control turret",
+    "name": { "str": "broken tear gas turret", "str_pl": "broken tear gas turrets" },
     "description": "A broken riot control turret.  Much less threatening now that it lies limp on solid ground.  Could be gutted for parts."
   },
   {
@@ -94,15 +94,15 @@
     "type": "GENERIC",
     "copy-from": "broken_turret_base",
     "color": "blue",
-    "name": "broken riotcontrol turret",
-    "description": "A broken 9mm defense turret.  Much less threatening now that it lies limp on solid ground.  Could be gutted for parts."
+    "name": { "str": "broken riot=control turret", "str_pl": "broken riot-control turrets" },
+    "description": "A broken bean bag shotgun turret.  Much less less-than-lethal now that it lies limp on solid ground.  Could be gutted for parts."
   },
   {
     "id": "broken_milturret_556",
     "type": "GENERIC",
     "copy-from": "broken_milturret_base",
     "color": "light_green",
-    "name": "broken 5.56mm turret",
+    "name": { "str": "broken 5.56mm turret", "str_pl": "broken 5.56mm turrets" },
     "description": "A broken military-grade 5.56mm turret.  Much less threatening now that it lies limp on solid ground.  Could be gutted for parts."
   },
   {
@@ -110,7 +110,7 @@
     "type": "GENERIC",
     "copy-from": "broken_milturret_base",
     "color": "light_green",
-    "name": "broken 5.56mm turret",
+    "name": { "str": "broken 5.56mm turret", "str_pl": "broken 5.56mm turrets" },
     "description": "A broken military-grade 5.56mm turret.  Much less threatening now that it lies limp on solid ground.  Could be gutted for parts."
   },
   {
@@ -118,7 +118,7 @@
     "type": "GENERIC",
     "copy-from": "broken_turret_base",
     "color": "light_green",
-    "name": "broken 7.62mm turret",
+    "name": { "str": "broken 7.62mm turret", "str_pl": "broken 7.62mm turrets" },
     "description": "A broken military-grade 7.62mm turret.  Much less threatening now that it lies limp on solid ground.  Could be gutted for parts."
   },
   {
@@ -126,15 +126,15 @@
     "type": "GENERIC",
     "copy-from": "broken_milturret_base",
     "color": "green",
-    "name": "broken 50cal turret",
-    "description": "A broken military-grade 50 caliber turret.  Much less threatening now that it lies limp on solid ground.  Could be gutted for parts."
+    "name": { "str": "broken .50 cal turret", "str_pl": "broken .50 cal turrets" },
+    "description": "A broken military-grade 50-caliber turret.  Much less threatening now that it lies limp on solid ground.  Could be gutted for parts."
   },
   {
     "id": "broken_turret_bmg",
     "type": "GENERIC",
     "copy-from": "broken_milturret_base",
     "color": "green",
-    "name": "broken 50cal turret",
+    "name": { "str": "broken .50 cal turret", "str_pl": "broken .50 cal turrets" },
     "description": "A broken military-grade 50 caliber turret.  Much less threatening now that it lies limp on solid ground.  Could be gutted for parts."
   },
   {
@@ -142,15 +142,15 @@
     "type": "GENERIC",
     "copy-from": "broken_milturret_base",
     "color": "light_green",
-    "name": "broken 40mm turret",
-    "description": "A broken military-grade 40mm grenade turret.  Much less threatening now that it lies limp on solid ground.  Could be gutted for parts."
+    "name": { "str": "broken 40mm grenade turret", "str_pl": "broken 40mm grenade turrets" },
+    "description": "A broken military-grade 40mm grenade launcher turret.  Much less threatening now that it lies limp on solid ground.  Could be gutted for parts."
   },
   {
     "id": "broken_milturret_needle",
     "type": "GENERIC",
     "copy-from": "broken_milturret_base",
     "color": "light_red",
-    "name": "broken 5.56mm turret",
+    "name": { "str": "broken 5x50mm flechette turret", "str_pl": "broken 5x50mm flechette turrets" },
     "description": "A broken military-grade 5x50 flechette turret.  Much less threatening now that it lies limp on solid ground.  Could be gutted for parts."
   },
   {
@@ -158,7 +158,7 @@
     "type": "GENERIC",
     "copy-from": "broken_milturret_base",
     "color": "red",
-    "name": "broken 8x40mm turret",
+    "name": { "str": "broken 8x40mm turret", "str_pl": "broken 8x40mm turrets" },
     "description": "A broken military-grade 8x40mm turret.  Much less threatening now that it lies limp on solid ground.  Could be gutted for parts."
   },
   {
@@ -166,7 +166,7 @@
     "type": "GENERIC",
     "copy-from": "broken_milturret_base",
     "color": "red",
-    "name": "broken flamethrower turret",
+    "name": { "str": "broken flamethrower turret", "str_pl": "broken flamethrower turrets" },
     "description": "A broken military-grade flamethrower turret.  Much less threatening now that it lies limp on solid ground.  Could be gutted for parts."
   },
   {
@@ -174,7 +174,7 @@
     "type": "GENERIC",
     "copy-from": "broken_advturret_base",
     "color": "yellow",
-    "name": "broken laser turret",
+    "name": { "str": "broken laser turret", "str_pl": "broken laser turrets" },
     "description": "A broken advanced laser emitter turret.  Much less threatening now that it lies limp on solid ground.  Could be gutted for parts."
   },
   {
@@ -182,7 +182,7 @@
     "type": "GENERIC",
     "copy-from": "broken_advturret_base",
     "color": "yellow",
-    "name": "broken laser turret",
+    "name": { "str": "broken laser turret", "str_pl": "broken laser turrets" },
     "description": "A broken advanced laser emitter turret.  Much less threatening now that it lies limp on solid ground.  Could be gutted for parts."
   },
   {
@@ -190,7 +190,7 @@
     "type": "GENERIC",
     "copy-from": "broken_advturret_base",
     "color": "light_green",
-    "name": "broken acid turret",
+    "name": { "str": "broken acid turret", "str_pl": "broken acid turrets" },
     "description": "A broken advanced acid thrower turret.  Much less threatening now that it lies limp on solid ground.  Could be gutted for parts."
   },
   {
@@ -198,7 +198,7 @@
     "type": "GENERIC",
     "copy-from": "broken_advturret_base",
     "color": "magenta",
-    "name": "broken plasma turret",
+    "name": { "str": "broken plasma turret", "str_pl": "broken plasma turrets" },
     "description": "A broken advanced plasma ejector turret.  Much less threatening now that it lies limp on solid ground.  Could be gutted for parts."
   },
   {
@@ -206,7 +206,7 @@
     "type": "GENERIC",
     "copy-from": "broken_advturret_base",
     "color": "yellow",
-    "name": "broken rail gun turret",
+    "name": { "str": "broken railgun turret", "str_pl": "broken railgun turrets" },
     "description": "A broken advanced rail gun turret.  Much less threatening now that it lies limp on solid ground.  Could be gutted for parts."
   },
   {
@@ -214,7 +214,7 @@
     "type": "GENERIC",
     "copy-from": "broken_advturret_base",
     "color": "light_green",
-    "name": "broken acid turret",
+    "name": { "str": "broken acid turret", "str_pl": "broken acid turrets" },
     "description": "A broken advanced acid projector turret.  Much less threatening now that it lies limp on solid ground.  Could be gutted for parts."
   },
   {
@@ -222,7 +222,7 @@
     "type": "GENERIC",
     "copy-from": "broken_advturret_base",
     "color": "white",
-    "name": "broken electro turret",
+    "name": { "str": "broken electro turret", "str_pl": "broken electro turrets" },
     "description": "A broken advanced electro caster turret.  Much less threatening now that it lies limp on solid ground.  Could be gutted for parts."
   },
   {
@@ -230,7 +230,7 @@
     "type": "GENERIC",
     "copy-from": "broken_advturret_base",
     "color": "yellow",
-    "name": "broken EMP turret",
+    "name": { "str": "broken EMP turret", "str_pl": "broken EMP turrets" },
     "description": "A broken advanced EMP generator turret.  Much less threatening now that it lies limp on solid ground.  Could be gutted for parts."
   },
   {
@@ -238,7 +238,7 @@
     "type": "GENERIC",
     "copy-from": "broken_turret_base",
     "color": "light_gray",
-    "name": "broken gaurdin gnome",
+    "name": { "str": "broken guardin' gnome", "str_pl": "broken guardin' gnomes" },
     "description": "A broken and completely harmless garden gnome."
   },
   {
@@ -246,7 +246,7 @@
     "type": "GENERIC",
     "symbol": ",",
     "color": "light_green",
-    "name": "broken hack",
+    "name": { "str": "broken hack", "str_pl": "broken hacks" },
     "looks_like": "broken_manhack",
     "category": "other",
     "description": "A broken manhack.  Much less threatening now that it lies limp on solid ground.  Could be gutted for parts.",
@@ -265,7 +265,7 @@
     "id": "broken_manhack",
     "copy-from": "broken_hack_base",
     "color": "light_green",
-    "name": "broken manhack",
+    "name": { "str": "broken manhack", "str_pl": "broken manhacks" },
     "description": "A broken manhack.  Much less threatening now that it lies limp on solid ground.  Could be gutted for parts.",
     "price": 1000,
     "weight": 5400
@@ -275,7 +275,7 @@
     "id": "broken_grenade_hack",
     "copy-from": "broken_hack_base",
     "color": "green",
-    "name": "broken grenade hack",
+    "name": { "str": "broken grenade hack", "str_pl": "broken grenade hacks" },
     "description": "A broken grenade hack.  Much less threatening now that it lies quiet on solid ground.  Could be gutted for parts.",
     "weight": 4480
   },
@@ -284,7 +284,7 @@
     "id": "broken_mininuke_hack",
     "copy-from": "broken_hack_base",
     "color": "magenta",
-    "name": "broken mininuke hack",
+    "name": { "str": "broken mininuke hack", "str_pl": "broken mininuke hacks" },
     "description": "A broken magenta hack.  Just looking at the wreck makes you shiver.  Could be gutted for parts.",
     "price": 18000,
     "weight": 12670
@@ -292,7 +292,7 @@
   {
     "type": "GENERIC",
     "id": "broken_gasbomb_hack",
-    "copy-from": "broken_hack_base",
+    "name": { "str": "broken tear gas hack", "str_pl": "broken tear gas hacks" },
     "color": "dark_gray",
     "name": "broken tear gas hack",
     "description": "A broken tear gas hack.  Much less threatening now that it lies quiet on solid ground.  Could be gutted for parts.",
@@ -303,7 +303,7 @@
     "id": "broken_EMP_hack",
     "copy-from": "broken_hack_base",
     "color": "cyan",
-    "name": "broken EMP hack",
+    "name": { "str": "broken EMP hack", "str_pl": "broken EMP hacks" },
     "description": "A broken EMP hack.  Much less threatening now that it lies quiet on solid ground.  Could be gutted for parts.",
     "weight": 4700
   },
@@ -312,7 +312,7 @@
     "id": "broken_flashbang_hack",
     "copy-from": "broken_hack_base",
     "color": "dark_gray",
-    "name": "broken flashbang hack",
+    "name": { "str": "broken flashbang hack", "str_pl": "broken flashbag hacks" },
     "description": "A broken flashbang hack.  Much less threatening now that it lies quiet on solid ground.  Could be gutted for parts.",
     "weight": 4700
   },
@@ -321,7 +321,7 @@
     "id": "broken_c4_hack",
     "copy-from": "broken_hack_base",
     "color": "light_gray",
-    "name": "broken C-4 hack",
+    "name": { "str": "broken C-4 hack", "str_pl": "broken C-4 hacks" },
     "description": "A broken C-4 hack.  Much less threatening now that it lies quiet on solid ground.  Could be gutted for parts.",
     "weight": 5870
   },
@@ -330,7 +330,7 @@
     "id": "broken_eyebot",
     "symbol": ",",
     "color": "green",
-    "name": "broken eyebot",
+    "name": { "str": "broken eyebot", "str_pl": "broken eyebots" },
     "category": "other",
     "description": "A broken eyebot.  Much less threatening now that it won't be calling for backup.  Could be gutted for parts.",
     "price": 1000,
@@ -347,7 +347,7 @@
     "id": "broken_eyebot",
     "symbol": ",",
     "color": "green",
-    "name": "broken eyebot",
+    "name": { "str": "broken eyebot", "str_pl": "broken eyebots" },
     "looks_like": "broken_eyebot",
     "category": "other",
     "description": "A broken eyebot, now dark and motionless.  Could be stripped down for parts.",
@@ -364,7 +364,7 @@
     "type": "GENERIC",
     "id": "broken_eyebot_disarmed",
     "copy-from": "broken_eyebot",
-    "name": "broken disarmed eyebot",
+    "name": { "str": "broken disarmed eyebot", "str_pl": "broken disarmed eyebots" },
     "description": "A broken eyebot.  Its integrated weapon module has been removed.  Could be gutted for parts or crafted into a salvaged robot."
   },
   {
@@ -373,7 +373,7 @@
     "symbol": ",",
     "color": "light_gray",
     "looks_like": "broken_cleanerbot",
-    "name": "broken utility robot",
+    "name": { "str": "broken utility robot", "str_pl": "broken utility robots" },
     "category": "other",
     "description": "A broken utility robot, now limp and unmoving.  Could be gutted for parts or crafted into a salvaged robot.",
     "material": [ "steel", "plastic" ],
@@ -387,7 +387,7 @@
   {
     "type": "GENERIC",
     "id": "broken_hazmatbot",
-    "name": "broken utility robot",
+    "name": { "str": "broken utility robot", "str_pl": "broken utility robots" },
     "copy-from": "broken_utilibot",
     "color": "green"
   },
@@ -397,7 +397,7 @@
     "symbol": ",",
     "color": "green",
     "looks_like": "broken_skitterbot",
-    "name": "broken disarmed skitterbot",
+    "name": { "str": "broken disarmed skitterbot", "str_pl": "broken disarmed skitterbots" },
     "category": "other",
     "description": "A broken skitterbot.  Its internal weapon modules have been removed.  Could be gutted for parts or crafted into a salvaged robot.",
     "price": 1000,
@@ -414,7 +414,7 @@
     "id": "broken_skitterbot",
     "copy-from": "broken_skitterbot_disarmed",
     "color": "light_blue",
-    "name": "broken skitterbot",
+    "name": { "str": "broken skitterbot", "str_pl": "broken skitterbots" },
     "description": "A broken skitterbot, now harmless and inert.  Could be stripped of integral weapon modules."
   },
   {
@@ -423,7 +423,7 @@
     "symbol": ",",
     "color": "light_gray",
     "looks_like": "broken_riotbot",
-    "name": "broken disarmed defense bot",
+    "name": { "str": "broken disarmed defense bot", "str_pl": "broken disarmed defense bots" },
     "category": "other",
     "description": "A broken defense robot.  Its internal weapons have been removed.  Could be gutted for parts or crafted into a salvaged robot.",
     "price": 30000,
@@ -441,7 +441,7 @@
     "id": "broken_secubot",
     "copy-from": "broken_defbot_disarmed",
     "color": "light_gray",
-    "name": "broken security robot",
+    "name": { "str": "broken security robot", "str_pl": "broken security robots" },
     "description": "A broken defense robot.  Its internal weapons have been removed.  Could be gutted for parts or crafted into a salvaged robot."
   },
   {
@@ -449,15 +449,15 @@
     "id": "broken_riotbot",
     "copy-from": "broken_defbot_disarmed",
     "color": "light_gray",
-    "name": "broken riotcontrol robot",
-    "description": "A broken defense robot.  Its internal weapons have been removed.  Could be gutted for parts or crafted into a salvaged robot."
+    "name": { "str": "broken riot-control robot", "str_pl": "broken riot-control robots" },
+    "description": "A broken riot-control robot.  Its internal weapons have been removed.  Could be gutted for parts or crafted into a salvaged robot."
   },
   {
     "type": "GENERIC",
     "id": "broken_defbot_riotcontrol",
     "copy-from": "broken_defbot_disarmed",
     "color": "light_gray",
-    "name": "broken riotcontrol robot",
+    "name": { "str": "broken riot-control robot", "str_pl": "broken riot-control robots" },
     "description": "A broken defense robot.  Its internal weapons have been removed.  Could be gutted for parts or crafted into a salvaged robot."
   },
   {
@@ -465,7 +465,7 @@
     "id": "broken_copbot",
     "copy-from": "broken_defbot_disarmed",
     "color": "light_gray",
-    "name": "broken riotcontrol robot",
+    "name": { "str": "broken riot-control robot", "str_pl": "broken riot-control robots" },
     "description": "A broken defense robot.  Its internal weapons have been removed.  Could be gutted for parts or crafted into a salvaged robot."
   },
   {
@@ -473,7 +473,7 @@
     "id": "broken_molebot",
     "symbol": ",",
     "color": "green",
-    "name": "broken miner bot",
+    "name": { "str": "broken miner bot", "str_pl": "broken miner bots" },
     "category": "other",
     "description": "A broken miner bot.  Much less threatening now that it's no longer capable of drilling anything.  Could be gutted for parts.",
     "price": 20000,
@@ -491,7 +491,7 @@
     "id": "broken_chickenbot",
     "symbol": ",",
     "color": "light_gray",
-    "name": "broken chickenwalker",
+    "name": { "str": "broken chickenwalker", "str_pl": "broken chickenwalkers" },
     "category": "other",
     "description": "A broken chickenwalker.  Could be stripped for parts.",
     "price": 1000,
@@ -509,7 +509,7 @@
     "symbol": ",",
     "color": "light_gray",
     "looks_like": "broken_chickenbot",
-    "name": "broken disarmed chickenwalker",
+    "name": { "str": "broken disarmed chickenwalker", "str_pl": "broken disarmed chickenwalkers" },
     "category": "other",
     "description": "A broken chickenwalker.  Its internal weapons have been removed.  Could be gutted for parts or crafted into a salvaged robot.",
     "price": 1000,
@@ -526,7 +526,7 @@
     "id": "broken_tankbot",
     "symbol": ",",
     "color": "green",
-    "name": "broken tank drone",
+    "name": { "str": "broken tank drone", "str_pl": "broken tank drone" },
     "category": "other",
     "description": "A broken tank drone.  Could be stripped down for parts.",
     "price": 1000,
@@ -544,7 +544,7 @@
     "symbol": ",",
     "color": "green",
     "looks_like": "broken_tankbot",
-    "name": "broken disarmed tank drone",
+    "name": { "str": "broken disarmed tank drone", "str_pl": "broken disarmed tank drone" },
     "category": "other",
     "description": "A broken tank drone.  Could be gutted for parts or recrafted into a salvaged robot.",
     "price": 1000,
