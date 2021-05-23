@@ -1,8 +1,10 @@
 #include "speech.h"
 
 #include <map>
-#include <vector>
+#include <set>
+#include <string>
 #include <utility>
+#include <vector>
 
 #include "json.h"
 #include "rng.h"

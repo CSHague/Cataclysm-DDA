@@ -1,18 +1,20 @@
 #include "trait_group.h"
 
-#include <cstddef>
 #include <algorithm>
-#include <cassert>
+#include <cstddef>
 #include <map>
+#include <string>
+#include <type_traits>
 #include <utility>
 
+#include "cata_assert.h"
 #include "debug.h"
 #include "json.h"
+#include "mutation.h"
 #include "rng.h"
+#include "string_formatter.h"
 #include "translations.h"
 #include "ui.h"
-#include "compatibility.h"
-#include "mutation.h"
 
 using namespace trait_group;
 
@@ -43,7 +45,7 @@ static Trait_group_tag get_unique_trait_group_id()
     // names should not be seen anywhere.
     static const std::string unique_prefix = "\u01F7 ";
     while( true ) {
-        const Trait_group_tag new_group( unique_prefix + to_string( next_id++ ) );
+        const Trait_group_tag new_group( unique_prefix + std::to_string( next_id++ ) );
         if( !new_group.is_valid() ) {
             return new_group;
         }
@@ -98,7 +100,7 @@ void trait_group::debug_spawn()
         std::map<std::string, int> traitnames;
         for( size_t a = 0; a < 100; a++ ) {
             const auto traits = traits_from( groups[index] );
-            for( auto &tr : traits ) {
+            for( const string_id<mutation_branch> &tr : traits ) {
                 traitnames[mutation_branch::get_name( tr )]++;
             }
         }
@@ -266,7 +268,7 @@ Trait_list Trait_group_collection::create( RecursionList &rec ) const
 
 void Trait_group_collection::add_entry( std::unique_ptr<Trait_creation_data> ptr )
 {
-    assert( ptr.get() != nullptr );
+    cata_assert( ptr.get() != nullptr );
     if( ptr->probability <= 0 ) {
         return;
     }
@@ -279,7 +281,7 @@ void Trait_group_collection::add_entry( std::unique_ptr<Trait_creation_data> ptr
 
 void Trait_group_distribution::add_entry( std::unique_ptr<Trait_creation_data> ptr )
 {
-    assert( ptr.get() != nullptr );
+    cata_assert( ptr.get() != nullptr );
     if( ptr->probability <= 0 ) {
         return;
     }

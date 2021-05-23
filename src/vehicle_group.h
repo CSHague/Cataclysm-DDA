@@ -1,23 +1,23 @@
 #pragma once
-#ifndef VEHICLE_GROUP_H
-#define VEHICLE_GROUP_H
+#ifndef CATA_SRC_VEHICLE_GROUP_H
+#define CATA_SRC_VEHICLE_GROUP_H
 
-#include <memory>
+#include <iosfwd>
 #include <unordered_map>
-#include <string>
 #include <vector>
 
 #include "mapgen.h"
+#include "memory_fast.h"
 #include "optional.h"
 #include "rng.h"
-#include "string_id.h"
 #include "type_id.h"
+#include "units_fwd.h"
 #include "weighted_list.h"
 
 class JsonObject;
-class map;
-class VehicleSpawn;
 class VehicleGroup;
+class VehicleSpawn;
+class map;
 
 using vspawn_id = string_id<VehicleSpawn>;
 struct point;
@@ -54,18 +54,18 @@ class VehicleGroup
 struct VehicleFacings {
     VehicleFacings( const JsonObject &jo, const std::string &key );
 
-    int pick() const {
+    units::angle pick() const {
         return random_entry( values );
     }
 
-    std::vector<int> values;
+    std::vector<units::angle> values;
 };
 
 struct VehicleLocation {
     VehicleLocation( const jmapgen_int &x, const jmapgen_int &y, const VehicleFacings &facings )
         : x( x ), y( y ), facings( facings ) {}
 
-    int pick_facing() const {
+    units::angle pick_facing() const {
         return facings.pick();
     }
 
@@ -112,7 +112,7 @@ using vehicle_gen_pointer = void ( * )( map &, const std::string & );
 class VehicleFunction_builtin : public VehicleFunction
 {
     public:
-        VehicleFunction_builtin( const vehicle_gen_pointer &func ) : func( func ) {}
+        explicit VehicleFunction_builtin( const vehicle_gen_pointer &func ) : func( func ) {}
         ~VehicleFunction_builtin() override = default;
 
         /**
@@ -131,7 +131,7 @@ class VehicleFunction_builtin : public VehicleFunction
 class VehicleFunction_json : public VehicleFunction
 {
     public:
-        VehicleFunction_json( const JsonObject &jo );
+        explicit VehicleFunction_json( const JsonObject &jo );
         ~VehicleFunction_json() override = default;
 
         /**
@@ -189,4 +189,4 @@ class VehicleSpawn
         static FunctionMap builtin_functions;
 };
 
-#endif
+#endif // CATA_SRC_VEHICLE_GROUP_H

@@ -1,7 +1,7 @@
 #include "emit.h"
 
-#include <map>
 #include <algorithm>
+#include <map>
 #include <utility>
 
 #include "debug.h"

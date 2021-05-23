@@ -1,6 +1,6 @@
 #pragma once
-#ifndef COLOR_LOADER_H
-#define COLOR_LOADER_H
+#ifndef CATA_SRC_COLOR_LOADER_H
+#define CATA_SRC_COLOR_LOADER_H
 
 #include <array>
 #include <fstream>
@@ -53,6 +53,8 @@ class color_loader
             jsin.start_array();
             while( !jsin.end_array() ) {
                 JsonObject jo = jsin.get_object();
+                // This isn't actually read (here), so just ignore it
+                jo.get_string( "type" );
                 load_colors( jo );
                 jo.finish();
             }
@@ -83,4 +85,4 @@ class color_loader
         }
 };
 
-#endif
+#endif // CATA_SRC_COLOR_LOADER_H

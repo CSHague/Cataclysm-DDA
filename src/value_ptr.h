@@ -1,6 +1,6 @@
 #pragma once
-#ifndef CATA_VALUE_PTR_H
-#define CATA_VALUE_PTR_H
+#ifndef CATA_SRC_VALUE_PTR_H
+#define CATA_SRC_VALUE_PTR_H
 
 #include <memory>
 
@@ -20,7 +20,9 @@ class value_ptr : public std::unique_ptr<T>
     public:
         value_ptr() = default;
         value_ptr( value_ptr && ) = default;
-        value_ptr( T *value ) : std::unique_ptr<T>( value ) {}
+        // NOLINTNEXTLINE(google-explicit-constructor)
+        value_ptr( std::nullptr_t ) {}
+        explicit value_ptr( T *value ) : std::unique_ptr<T>( value ) {}
         value_ptr( const value_ptr<T> &other ) :
             std::unique_ptr<T>( other ? new T( *other ) : nullptr ) {}
         value_ptr &operator=( value_ptr<T> other ) {
@@ -53,6 +55,12 @@ value_ptr<T> make_value( Args &&...args )
     return value_ptr<T>( new T( std::forward<Args>( args )... ) );
 }
 
+template <class T>
+bool value_ptr_equals( const value_ptr<T> &lhs, const value_ptr<T> &rhs )
+{
+    return ( !lhs && !rhs ) || ( lhs && rhs && *lhs == *rhs );
+}
+
 } // namespace cata
 
-#endif // CATA_VALUE_PTR_H
+#endif // CATA_SRC_VALUE_PTR_H

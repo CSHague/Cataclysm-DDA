@@ -1,21 +1,26 @@
 #pragma once
-#ifndef JSON_H
-#define JSON_H
+#ifndef CATA_SRC_JSON_H
+#define CATA_SRC_JSON_H
 
-#include <cstddef>
-#include <type_traits>
-#include <iostream>
-#include <string>
-#include <vector>
-#include <bitset>
 #include <array>
+#include <bitset>
+#include <cstddef>
+#include <cstdint>
+#include <iostream>
+#include <iterator>
 #include <map>
 #include <set>
 #include <stdexcept>
+#include <string>
+#include <type_traits>
+#include <utility>
+#include <vector>
 
 #include "colony.h"
 #include "enum_conversions.h"
-#include "optional.h"
+#include "int_id.h"
+#include "memory_fast.h"
+#include "string_id.h"
 
 /* Cataclysm-DDA homegrown JSON tools
  * copyright CC-BY-SA-3.0 2013 CleverRaven
@@ -31,19 +36,23 @@
  * Further documentation can be found below.
  */
 
-class JsonObject;
 class JsonArray;
-class JsonSerializer;
 class JsonDeserializer;
+class JsonObject;
+class JsonSerializer;
 class JsonValue;
+class item;
 
+namespace cata
+{
 template<typename T>
-class string_id;
+class optional;
+} // namespace cata
 
 class JsonError : public std::runtime_error
 {
     public:
-        JsonError( const std::string &msg );
+        explicit JsonError( const std::string &msg );
         const char *c_str() const noexcept {
             return what();
         }
@@ -66,6 +75,13 @@ struct key_from_json_string<string_id<T>, void> {
     }
 };
 
+template<typename T>
+struct key_from_json_string<int_id<T>, void> {
+    int_id<T> operator()( const std::string &s ) {
+        return int_id<T>( s );
+    }
+};
+
 template<typename Enum>
 struct key_from_json_string<Enum, std::enable_if_t<std::is_enum<Enum>::value>> {
     Enum operator()( const std::string &s ) {
@@ -79,6 +95,11 @@ struct number_sci_notation {
     uint64_t number = 0;
     // AKA the order of magnitude
     int64_t exp = 0;
+};
+
+struct json_source_location {
+    shared_ptr_fast<std::string> path;
+    int offset = 0;
 };
 
 /* JsonIn
@@ -165,6 +186,7 @@ class JsonIn
 {
     private:
         std::istream *stream;
+        shared_ptr_fast<std::string> path;
         bool ate_separator = false;
 
         void skip_separator();
@@ -172,9 +194,19 @@ class JsonIn
         void end_value();
 
     public:
-        JsonIn( std::istream &s ) : stream( &s ) {}
+        explicit JsonIn( std::istream &s ) : stream( &s ) {}
+        JsonIn( std::istream &s, const std::string &path )
+            : stream( &s ), path( make_shared_fast<std::string>( path ) ) {}
+        JsonIn( std::istream &s, const json_source_location &loc )
+            : stream( &s ), path( loc.path ) {
+            seek( loc.offset );
+        }
         JsonIn( const JsonIn & ) = delete;
         JsonIn &operator=( const JsonIn & ) = delete;
+
+        shared_ptr_fast<std::string> get_path() const {
+            return path;
+        }
 
         bool get_ate_separator() {
             return ate_separator;
@@ -218,13 +250,12 @@ class JsonIn
 
         template<typename E, typename = typename std::enable_if<std::is_enum<E>::value>::type>
         E get_enum_value() {
-            const auto old_offset = tell();
+            const int old_offset = tell();
             try {
                 return io::string_to_enum<E>( get_string() );
             } catch( const io::InvalidEnumString & ) {
                 seek( old_offset ); // so the error message points to the correct place.
                 error( "invalid enumeration value" );
-                throw; // ^^ error already throws, but the compiler doesn't know that )-:
             }
         }
 
@@ -276,6 +307,17 @@ class JsonIn
                 return false;
             }
             thing = T( tmp );
+            return true;
+        }
+
+        // This is for the int_id type
+        template <typename T>
+        auto read( int_id<T> &thing, bool throw_on_error = false ) -> bool {
+            std::string tmp;
+            if( !read( tmp, throw_on_error ) ) {
+                return false;
+            }
+            thing = int_id<T>( tmp );
             return true;
         }
 
@@ -439,9 +481,59 @@ class JsonIn
             return true;
         }
 
+        // special case for colony<item> as it supports RLE
+        // see corresponding `write` for details
+        template <typename T, std::enable_if_t<std::is_same<T, item>::value> * = nullptr >
+        bool read( cata::colony<T> &v, bool throw_on_error = false ) {
+            if( !test_array() ) {
+                return error_or_false( throw_on_error, "Expected json array" );
+            }
+            try {
+                start_array();
+                v.clear();
+                while( !end_array() ) {
+                    T element;
+                    const int prev_pos = tell();
+                    if( test_array() ) {
+                        start_array();
+                        int run_l;
+                        if( read( element, throw_on_error ) &&
+                            read( run_l, throw_on_error ) &&
+                            end_array()
+                          ) { // all is good
+                            // first insert (run_l-1) elements
+                            for( int i = 0; i < run_l - 1; i++ ) {
+                                v.insert( element );
+                            }
+                            // micro-optimization, move last element
+                            v.insert( std::move( element ) );
+                        } else { // array is malformed, skipping it entirely
+                            error_or_false( throw_on_error, "Expected end of array" );
+                            seek( prev_pos );
+                            skip_array();
+                        }
+                    } else {
+                        if( read( element, throw_on_error ) ) {
+                            v.insert( std::move( element ) );
+                        } else {
+                            skip_value();
+                        }
+                    }
+                }
+            } catch( const JsonError & ) {
+                if( throw_on_error ) {
+                    throw;
+                }
+                return false;
+            }
+
+            return true;
+        }
+
         // special case for colony as it uses `insert()` instead of `push_back()`
         // and therefore doesn't fit with vector/deque/list
-        template <typename T>
+        // for colony of items there is another specialization with RLE
+        template < typename T, std::enable_if_t < !std::is_same<T, item>::value > * = nullptr >
         bool read( cata::colony<T> &v, bool throw_on_error = false ) {
             if( !test_array() ) {
                 return error_or_false( throw_on_error, "Expected json array" );
@@ -502,6 +594,10 @@ class JsonIn
         // error messages
         std::string line_number( int offset_modifier = 0 ); // for occasional use only
         [[noreturn]] void error( const std::string &message, int offset = 0 ); // ditto
+        // if the next element is a string, throw error after the `offset`th unicode
+        // character in the parsed string. if `offset` is 0, throw error right after
+        // the starting quotation mark.
+        [[noreturn]] void string_error( const std::string &message, int offset );
 
         // If throw_, then call error( message, offset ), otherwise return
         // false
@@ -554,7 +650,7 @@ class JsonOut
         bool need_separator = false;
 
     public:
-        JsonOut( std::ostream &stream, bool pretty_print = false, int depth = 0 );
+        explicit JsonOut( std::ostream &stream, bool pretty_print = false, int depth = 0 );
         JsonOut( const JsonOut & ) = delete;
         JsonOut &operator=( const JsonOut & ) = delete;
 
@@ -637,6 +733,11 @@ class JsonOut
             write( thing.str() );
         }
 
+        template <typename T>
+        auto write( const int_id<T> &thing ) {
+            write( thing.id().str() );
+        }
+
         // enum ~> string
         template <typename E, typename std::enable_if<std::is_enum<E>::value>::type * = nullptr>
         void write_as_string( const E value ) {
@@ -650,6 +751,11 @@ class JsonOut
         template<typename T>
         void write_as_string( const string_id<T> &s ) {
             write( s );
+        }
+
+        template<typename T>
+        void write_as_string( const int_id<T> &s ) {
+            write( s.id() );
         }
 
         template<typename T, typename U>
@@ -687,8 +793,37 @@ class JsonOut
             write_as_array( container );
         }
 
+        // special case for item colony, adds simple RLE-based compression
+        template <typename T, std::enable_if_t<std::is_same<T, item>::value> * = nullptr>
+        void write( const cata::colony<T> &container ) {
+            start_array();
+            // simple RLE implementation:
+            // run_l is the length of the "running sequence" of identical items, ending with the current item.
+            // when sequence ends, it's written as either the single item object (run_l==1) or as a two-element
+            // array (run_l > 1), where the first element is the item and second element is the size of the sequence.
+            int run_l = 1;
+            for( auto it = container.begin(); it != container.end(); ++it ) {
+                const auto nxt = std::next( it );
+                if( nxt == container.end() || !it->same_for_rle( *nxt ) ) {
+                    if( run_l == 1 ) {
+                        write( *it );
+                    } else {
+                        start_array();
+                        write( *it );
+                        write( run_l );
+                        end_array();
+                    }
+                    run_l = 1;
+                } else {
+                    run_l++;
+                }
+            }
+            end_array();
+        }
+
         // special case for colony, since it doesn't fit in other categories
-        template <typename T>
+        // for colony of items there is another specialization with RLE
+        template < typename T, std::enable_if_t < !std::is_same<T, item>::value > * = nullptr >
         void write( const cata::colony<T> &container ) {
             write_as_array( container );
         }
@@ -715,6 +850,16 @@ class JsonOut
         template <typename T> void member( const std::string &name, const T &value ) {
             member( name );
             write( value );
+        }
+        template <typename T> void member( const std::string &name, const T &value,
+                                           const T &value_default ) {
+            if( value != value_default ) {
+                member( name, value );
+            }
+        }
+        template <typename T> void member_as_string( const std::string &name, const T &value ) {
+            member( name );
+            write_as_string( value );
         }
 };
 
@@ -783,12 +928,12 @@ class JsonOut
  *
  * By default, when a JsonObject is destroyed (or when you call finish) it will
  * check to see whether every member of the object was referenced in some way
- * (even simply checking for the existence of the member is suffucient).
+ * (even simply checking for the existence of the member is sufficient).
  *
  * If not all the members were referenced, then an error will be written to the
  * log (which in particular will cause the tests to fail).
  *
- * If you don't want this behaviour, then call allow_omitted_members() before
+ * If you don't want this behavior, then call allow_omitted_members() before
  * the JsonObject is destroyed.  Calling str() also suppresses it (on the basis
  * that you may be intending to re-parse that string later).
  */
@@ -812,8 +957,9 @@ class JsonObject
                              bool throw_exception = true ) const;
 
     public:
-        JsonObject( JsonIn &jsin );
-        JsonObject() : start( 0 ), end_( 0 ), jsin( nullptr ) {}
+        explicit JsonObject( JsonIn &jsin );
+        JsonObject() :
+            start( 0 ), end_( 0 ), final_separator( false ), jsin( nullptr ) {}
         JsonObject( const JsonObject & ) = default;
         JsonObject( JsonObject && ) = default;
         JsonObject &operator=( const JsonObject & ) = default;
@@ -823,6 +969,7 @@ class JsonObject
         }
 
         class const_iterator;
+
         friend const_iterator;
 
         const_iterator begin() const;
@@ -833,14 +980,18 @@ class JsonObject
         bool empty() const;
 
         void allow_omitted_members() const;
+        // If we're making a copy of the JsonObject (because it is required) to pass to a function,
+        // use this to count the members visited on that one as visited on this one
+        // See item::deserialize for a use case
+        void copy_visited_members( const JsonObject &rhs ) const;
         bool has_member( const std::string &name ) const; // true iff named member exists
-        std::set<std::string> get_member_names() const;
         std::string str() const; // copy object json as string
-        [[noreturn]] void throw_error( std::string err ) const;
-        [[noreturn]] void throw_error( std::string err, const std::string &name ) const;
+        [[noreturn]] void throw_error( const std::string &err ) const;
+        [[noreturn]] void throw_error( const std::string &err, const std::string &name ) const;
         // seek to a value and return a pointer to the JsonIn (member must exist)
         JsonIn *get_raw( const std::string &name ) const;
         JsonValue get_member( const std::string &name ) const;
+        json_source_location get_source_location() const;
 
         // values by name
         // variants with no fallback throw an error if the name is not found.
@@ -879,8 +1030,8 @@ class JsonObject
         JsonObject get_object( const std::string &name ) const;
 
         // get_tags returns empty set if none found
-        template <typename T = std::string>
-        std::set<T> get_tags( const std::string &name ) const;
+        template<typename T = std::string, typename Res = std::set<T>>
+        Res get_tags( const std::string &name ) const;
 
         // TODO: some sort of get_map(), maybe
 
@@ -901,7 +1052,7 @@ class JsonObject
         // non-fatally read values by reference
         // return true if the value was set.
         // return false if the member is not found.
-        // throw_on_error dictates the behaviour when the member was present
+        // throw_on_error dictates the behavior when the member was present
         // but the read fails.
         template <typename T>
         bool read( const std::string &name, T &t, bool throw_on_error = true ) const {
@@ -1000,7 +1151,7 @@ class JsonArray
         void verify_index( size_t i ) const;
 
     public:
-        JsonArray( JsonIn &jsin );
+        explicit JsonArray( JsonIn &jsin );
         JsonArray( const JsonArray &ja );
         JsonArray() : start( 0 ), index( 0 ), end_( 0 ), final_separator( false ), jsin( nullptr ) {}
         ~JsonArray() {
@@ -1014,8 +1165,10 @@ class JsonArray
         size_t size() const;
         bool empty();
         std::string str(); // copy array json as string
-        void throw_error( std::string err );
-        void throw_error( std::string err, int idx );
+        [[noreturn]] void throw_error( const std::string &err );
+        [[noreturn]] void throw_error( const std::string &err, int idx );
+        // See JsonIn::string_error
+        [[noreturn]] void string_error( const std::string &err, int idx, int offset );
 
         // iterative access
         bool next_bool();
@@ -1035,8 +1188,8 @@ class JsonArray
         JsonObject get_object( size_t index ) const;
 
         // get_tags returns empty set if none found
-        template <typename T = std::string>
-        std::set<T> get_tags( size_t index ) const;
+        template<typename T = std::string, typename Res = std::set<T>>
+        Res get_tags( size_t index ) const;
 
         class const_iterator;
 
@@ -1079,10 +1232,10 @@ class JsonArray
             return jsin->read( t );
         }
         // random-access read values by reference
-        template <typename T> bool read( size_t i, T &t ) const {
+        template <typename T> bool read( size_t i, T &t, bool throw_on_error = false ) const {
             verify_index( i );
             jsin->seek( positions[i] );
-            return jsin->read( t );
+            return jsin->read( t, throw_on_error );
         }
 };
 
@@ -1097,27 +1250,33 @@ class JsonValue
     public:
         JsonValue( JsonIn &jsin, int pos ) : jsin_( jsin ), pos_( pos ) { }
 
+        // NOLINTNEXTLINE(google-explicit-constructor)
         operator std::string() const {
             return seek().get_string();
         }
+        // NOLINTNEXTLINE(google-explicit-constructor)
         operator int() const {
             return seek().get_int();
         }
+        // NOLINTNEXTLINE(google-explicit-constructor)
         operator bool() const {
             return seek().get_bool();
         }
+        // NOLINTNEXTLINE(google-explicit-constructor)
         operator double() const {
             return seek().get_float();
         }
+        // NOLINTNEXTLINE(google-explicit-constructor)
         operator JsonObject() const {
             return seek().get_object();
         }
+        // NOLINTNEXTLINE(google-explicit-constructor)
         operator JsonArray() const {
             return seek().get_array();
         }
         template<typename T>
-        bool read( T &t ) const {
-            return seek().read( t );
+        bool read( T &t, bool throw_on_error = false ) const {
+            return seek().read( t, throw_on_error );
         }
 
         bool test_string() const {
@@ -1139,7 +1298,7 @@ class JsonValue
             return seek().test_array();
         }
 
-        void throw_error( const std::string &err ) const {
+        [[noreturn]] void throw_error( const std::string &err ) const {
             seek().error( err );
         }
 
@@ -1199,7 +1358,7 @@ inline JsonArray::const_iterator JsonArray::end() const
     return const_iterator( *this, size() );
 }
 /**
- * Represents a member of a @ref JsonObject. This is retured when one iterates over
+ * Represents a member of a @ref JsonObject. This is returned when one iterates over
  * a JsonObject.
  * It *is* @ref JsonValue, which is the value of the member, which allows one to write:
 <code>
@@ -1267,10 +1426,10 @@ inline JsonObject::const_iterator JsonObject::end() const
     return const_iterator( *this, positions.end() );
 }
 
-template <typename T>
-std::set<T> JsonArray::get_tags( const size_t index ) const
+template <typename T, typename Res>
+Res JsonArray::get_tags( const size_t index ) const
 {
-    std::set<T> res;
+    Res res;
 
     verify_index( index );
     jsin->seek( positions[ index ] );
@@ -1288,10 +1447,10 @@ std::set<T> JsonArray::get_tags( const size_t index ) const
     return res;
 }
 
-template <typename T>
-std::set<T> JsonObject::get_tags( const std::string &name ) const
+template <typename T, typename Res>
+Res JsonObject::get_tags( const std::string &name ) const
 {
-    std::set<T> res;
+    Res res;
     int pos = verify_position( name, false );
     if( !pos ) {
         return res;
@@ -1404,8 +1563,8 @@ void deserialize( cata::optional<T> &obj, JsonIn &jsin )
         obj.reset();
     } else {
         obj.emplace();
-        jsin.read( *obj );
+        jsin.read( *obj, true );
     }
 }
 
-#endif
+#endif // CATA_SRC_JSON_H

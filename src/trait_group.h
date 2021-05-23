@@ -1,18 +1,16 @@
 #pragma once
-#ifndef TRAIT_GROUP_H
-#define TRAIT_GROUP_H
+#ifndef CATA_SRC_TRAIT_GROUP_H
+#define CATA_SRC_TRAIT_GROUP_H
 
+#include <iosfwd>
 #include <memory>
 #include <vector>
-#include <string>
 
-#include "string_id.h"
 #include "type_id.h"
 
 class JsonObject;
-class JsonIn;
-class Trait_group;
 class JsonValue;
+class Trait_group;
 
 namespace trait_group
 {
@@ -72,7 +70,7 @@ class Trait_creation_data
     public:
         using RecursionList = std::vector<trait_group::Trait_group_tag>;
 
-        Trait_creation_data( int _probability ) : probability( _probability ) {}
+        explicit Trait_creation_data( int _probability ) : probability( _probability ) {}
         virtual ~Trait_creation_data() = default;
         Trait_creation_data( const Trait_creation_data & ) = delete;
         Trait_creation_data &operator=( const Trait_creation_data & ) = delete;
@@ -148,7 +146,7 @@ class Trait_group : public Trait_creation_data
     public:
         using CreatorList = std::vector<std::unique_ptr<Trait_creation_data> >;
 
-        Trait_group( int probability );
+        explicit Trait_group( int probability );
         ~Trait_group() override = default;
 
         void add_trait_entry( const trait_id &tid, int probability );
@@ -179,7 +177,7 @@ class Trait_group : public Trait_creation_data
 class Trait_group_collection : public Trait_group
 {
     public:
-        Trait_group_collection( int probability );
+        explicit Trait_group_collection( int probability );
         ~Trait_group_collection() override = default;
 
         trait_group::Trait_list create( RecursionList &rec ) const override;
@@ -194,7 +192,7 @@ class Trait_group_collection : public Trait_group
 class Trait_group_distribution : public Trait_group
 {
     public:
-        Trait_group_distribution( int probability ) :
+        explicit Trait_group_distribution( int probability ) :
             Trait_group( probability ) {}
         ~Trait_group_distribution() override = default;
 
@@ -202,4 +200,4 @@ class Trait_group_distribution : public Trait_group
         void add_entry( std::unique_ptr<Trait_creation_data> ptr ) override;
 };
 
-#endif
+#endif // CATA_SRC_TRAIT_GROUP_H

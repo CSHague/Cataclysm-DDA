@@ -1,18 +1,19 @@
 #pragma once
-#ifndef FAULT_H
-#define FAULT_H
+#ifndef CATA_SRC_FAULT_H
+#define CATA_SRC_FAULT_H
 
+#include <iosfwd>
 #include <map>
+#include <new>
 #include <set>
 #include <string>
 
 #include "calendar.h"
-#include "string_id.h"
+#include "optional.h"
 #include "translations.h"
 #include "type_id.h"
 
 class JsonObject;
-struct requirement_data;
 
 struct mending_method {
     std::string id;
@@ -83,4 +84,4 @@ class fault
         std::set<std::string> flags;
 };
 
-#endif
+#endif // CATA_SRC_FAULT_H

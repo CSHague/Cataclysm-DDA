@@ -1,3 +1,5 @@
+#include <type_traits>
+
 #include "catch/catch.hpp"
 #include "value_ptr.h"
 

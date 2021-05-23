@@ -1,9 +1,9 @@
 #pragma once
-#ifndef OVERLAY_ORDERING_H
-#define OVERLAY_ORDERING_H
+#ifndef CATA_SRC_OVERLAY_ORDERING_H
+#define CATA_SRC_OVERLAY_ORDERING_H
 
+#include <iosfwd>
 #include <map>
-#include <string>
 
 class JsonObject;
 
@@ -16,4 +16,4 @@ void load_overlay_ordering_into_array( const JsonObject &jsobj,
 int get_overlay_order_of_mutation( const std::string &mutation_id_string );
 void reset_overlay_ordering();
 
-#endif
+#endif // CATA_SRC_OVERLAY_ORDERING_H

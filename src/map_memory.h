@@ -1,15 +1,15 @@
 #pragma once
-#ifndef MAP_MEMORY_H
-#define MAP_MEMORY_H
+#ifndef CATA_SRC_MAP_MEMORY_H
+#define CATA_SRC_MAP_MEMORY_H
 
-#include <string>
+#include <iosfwd>
 
 #include "lru_cache.h"
 #include "point.h" // IWYU pragma: keep
 
-class JsonOut;
-class JsonObject;
 class JsonIn;
+class JsonObject;
+class JsonOut;
 
 struct memorized_terrain_tile {
     std::string tile;
@@ -39,4 +39,4 @@ class map_memory
         lru_cache<tripoint, int> symbol_cache;
 };
 
-#endif
+#endif // CATA_SRC_MAP_MEMORY_H

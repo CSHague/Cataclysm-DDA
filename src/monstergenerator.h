@@ -1,22 +1,25 @@
 #pragma once
-#ifndef MONSTERGENERATOR_H
-#define MONSTERGENERATOR_H
+#ifndef CATA_SRC_MONSTERGENERATOR_H
+#define CATA_SRC_MONSTERGENERATOR_H
 
+#include <array>
+#include <iosfwd>
 #include <map>
+#include <memory>
 #include <vector>
-#include <string>
 
+#include "enum_bitset.h"
 #include "enums.h"
+#include "generic_factory.h"
 #include "mattack_common.h"
 #include "mtype.h"
+#include "optional.h"
 #include "pimpl.h"
-#include "string_id.h"
-#include "enum_bitset.h"
-#include "generic_factory.h"
+#include "translations.h"
 #include "type_id.h"
 
-class JsonObject;
 class Creature;
+class JsonObject;
 class monster;
 struct dealt_projectile_attack;
 
@@ -28,13 +31,14 @@ struct species_type {
     species_id id;
     bool was_loaded = false;
     translation description;
-    std::string footsteps;
+    translation footsteps;
     enum_bitset<m_flag> flags;
     enum_bitset<mon_trigger> anger;
     enum_bitset<mon_trigger> fear;
     enum_bitset<mon_trigger> placate;
+    field_type_str_id bleeds;
     std::string get_footsteps() const {
-        return footsteps;
+        return footsteps.translated();
     }
 
     species_type(): id( species_id::NULL_ID() ) {
@@ -67,12 +71,13 @@ class MonsterGenerator
 
         void check_monster_definitions() const;
 
+        cata::optional<mon_action_death> get_death_function( const std::string &f ) const;
         const std::vector<mtype> &get_all_mtypes() const;
         mtype_id get_valid_hallucination() const;
         friend struct mtype;
         friend struct species_type;
         friend class mattack_actor;
-        std::map<m_flag, int> m_flag_usage_stats;
+        std::array<int, m_flag::MF_MAX> m_flag_usage_stats;
 
     private:
         MonsterGenerator();
@@ -92,7 +97,7 @@ class MonsterGenerator
 
         // finalization
         void apply_species_attributes( mtype &mon );
-        void set_species_ids( mtype &mon );
+        void validate_species_ids( mtype &mon );
         void finalize_pathfinding_settings( mtype &mon );
 
         friend class string_id<mtype>;
@@ -110,5 +115,6 @@ class MonsterGenerator
 };
 
 void load_monster_adjustment( const JsonObject &jsobj );
+void reset_monster_adjustment();
 
-#endif
+#endif // CATA_SRC_MONSTERGENERATOR_H

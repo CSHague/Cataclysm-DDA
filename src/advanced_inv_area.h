@@ -1,22 +1,16 @@
 #pragma once
-#ifndef ADVANCED_INV_AREA_H
-#define ADVANCED_INV_AREA_H
-
-#include "cursesdef.h"
-#include "point.h"
-#include "units.h"
-#include "game.h"
-#include "itype.h"
-#include "item_stack.h"
-#include "vehicle_selector.h"
+#ifndef CATA_SRC_ADVANCED_INV_AREA_H
+#define CATA_SRC_ADVANCED_INV_AREA_H
 
 #include <array>
-#include <list>
-#include <map>
-#include <string>
+#include <iosfwd>
 #include <vector>
 
-enum aim_location {
+#include "item_location.h"
+#include "point.h"
+#include "units.h" // IWYU pragma: keep
+
+enum aim_location : char {
     AIM_INVENTORY = 0,
     AIM_SOUTHWEST,
     AIM_SOUTH,
@@ -38,6 +32,8 @@ enum aim_location {
 };
 
 class advanced_inv_listitem;
+class item;
+class vehicle;
 
 /**
  * Defines the source of item stacks.
@@ -46,7 +42,7 @@ class advanced_inv_area
 {
     public:
         // roll our own, to handle moving stacks better
-        using itemstack = std::vector<std::list<item *> >;
+        using itemstack = std::vector<std::vector<item *> >;
 
         const aim_location id;
         // Used for the small overview 3x3 grid
@@ -62,35 +58,34 @@ class advanced_inv_area
         tripoint pos;
         /** Can we put items there? Only checks if location is valid, not if
             selected container in pane is. For full check use canputitems() **/
-        bool canputitemsloc;
+        bool canputitemsloc = false;
         // vehicle pointer and cargo part index
-        vehicle *veh;
-        int vstor;
+        vehicle *veh = nullptr;
+        int vstor = 0;
         // description, e.g. vehicle name, label, or terrain
         std::array<std::string, 2> desc;
         // flags, e.g. FIRE, TRAP, WATER
         std::string flags;
         // total volume and weight of items currently there
         units::volume volume;
+        units::volume volume_veh;
         units::mass weight;
+        units::mass weight_veh;
         // maximal count / volume of items there.
-        int max_size;
+        int max_size = 0;
         // appears as part of the legend at the top right
         const std::string minimapname;
-        // user commant that corresponds to this location
+        // user command that corresponds to this location
         const std::string actionname;
         // used for isometric view
         const aim_location relative_location;
 
+        // NOLINTNEXTLINE(google-explicit-constructor)
         advanced_inv_area( aim_location id ) : id( id ), relative_location( id ) {}
-        advanced_inv_area( aim_location id, int hscreenx, int hscreeny, tripoint off,
-                           const std::string &name, const std::string &shortname, std::string minimapname,
-                           std::string actionname, aim_location relative_location ) : id( id ),
-            hscreen( hscreenx, hscreeny ), off( off ), name( name ), shortname( shortname ),
-            canputitemsloc( false ), veh( nullptr ), vstor( -1 ), volume( 0_ml ),
-            weight( 0_gram ), max_size( 0 ), minimapname( minimapname ), actionname( actionname ),
-            relative_location( relative_location ) {
-        }
+        advanced_inv_area(
+            aim_location id, const point &hscreen, tripoint off, const std::string &name,
+            const std::string &shortname, std::string minimapname, std::string actionname,
+            aim_location relative_location );
 
         void init();
 
@@ -104,7 +99,7 @@ class advanced_inv_area
         // does _not_ check vehicle storage, do that with `can_store_in_vehicle()' below
         bool canputitems( const advanced_inv_listitem *advitem = nullptr );
         // if you want vehicle cargo, specify so via `in_vehicle'
-        item *get_container( bool in_vehicle = false );
+        item_location get_container( bool in_vehicle = false );
         void set_container( const advanced_inv_listitem *advitem );
         bool is_container_valid( const item *it ) const;
         void set_container_position();
@@ -117,4 +112,4 @@ class advanced_inv_area
             return veh != nullptr && vstor >= 0;
         }
 };
-#endif
+#endif // CATA_SRC_ADVANCED_INV_AREA_H

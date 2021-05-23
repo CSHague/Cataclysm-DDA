@@ -1,7 +1,7 @@
-#include <cstddef>
 #include <algorithm> // std::find
+#include <cstddef>
 #include <functional> // std::greater
-#include <utility> // std::move
+#include <type_traits>
 #include <vector> // range-insert testing
 
 #include "catch/catch.hpp"
@@ -347,7 +347,7 @@ TEST_CASE( "colony insert and erase", "[colony]" )
                 it = test_colony.erase( it );
             }
         }
-    } while( !test_colony.empty() );;
+    } while( !test_colony.empty() );
 
     // Random insert/erase till empty
     CHECK( test_colony.empty() );
@@ -772,7 +772,7 @@ TEST_CASE( "colony sort", "[colony]" )
     // Less-than sort test
     CHECK( sorted );
 
-    test_colony.sort( std::greater<int>() );
+    test_colony.sort( std::greater<>() );
 
     prev = 65536;
 

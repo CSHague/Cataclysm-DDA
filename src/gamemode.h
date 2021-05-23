@@ -1,27 +1,22 @@
 #pragma once
-#ifndef GAMEMODE_H
-#define GAMEMODE_H
+#ifndef CATA_SRC_GAMEMODE_H
+#define CATA_SRC_GAMEMODE_H
 
+#include <iosfwd>
 #include <memory>
-#include <string>
 
 #include "enums.h"
 
 enum action_id : int;
-namespace catacurses
-{
-class window;
-} // namespace catacurses
-
 struct special_game;
 
-std::string special_game_name( special_game_id id );
-std::unique_ptr<special_game> get_special_game( special_game_id id );
+std::string special_game_name( special_game_type id );
+std::unique_ptr<special_game> get_special_game( special_game_type id );
 
 struct special_game {
     virtual ~special_game() = default;
-    virtual special_game_id id() {
-        return SGAME_NULL;
+    virtual special_game_type id() {
+        return special_game_type::NONE;
     }
     // Run when the game begins
     virtual bool init() {
@@ -39,4 +34,4 @@ struct special_game {
 
 };
 
-#endif // GAMEMODE_H
+#endif // CATA_SRC_GAMEMODE_H

@@ -1,18 +1,18 @@
 #pragma once
-#ifndef OVERMAP_CONNECTION_H
-#define OVERMAP_CONNECTION_H
+#ifndef CATA_SRC_OVERMAP_CONNECTION_H
+#define CATA_SRC_OVERMAP_CONNECTION_H
 
+#include <iosfwd>
 #include <list>
-#include <vector>
 #include <set>
-#include <string>
+#include <vector>
 
 #include "int_id.h"
 #include "omdata.h"
 #include "string_id.h"
 
-class JsonObject;
 class JsonIn;
+class JsonObject;
 struct overmap_location;
 
 class overmap_connection
@@ -23,7 +23,7 @@ class overmap_connection
                 friend overmap_connection;
 
             public:
-                enum class flag { orthogonal };
+                enum class flag : int { orthogonal };
 
             public:
                 string_id<oter_type_t> terrain;
@@ -63,7 +63,7 @@ class overmap_connection
         struct cache {
             const subtype *value = nullptr;
             bool assigned = false;
-            operator bool() const {
+            explicit operator bool() const {
                 return assigned;
             }
         };
@@ -85,4 +85,4 @@ string_id<overmap_connection> guess_for( const int_id<oter_t> &oter_id );
 
 } // namespace overmap_connections
 
-#endif // OVERMAP_CONNECTION_H
+#endif // CATA_SRC_OVERMAP_CONNECTION_H

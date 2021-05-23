@@ -1,6 +1,6 @@
 #pragma once
-#ifndef CATA_FLAT_SET
-#define CATA_FLAT_SET
+#ifndef CATA_SRC_FLAT_SET_H
+#define CATA_SRC_FLAT_SET_H
 
 #include <algorithm>
 #include <vector>
@@ -13,7 +13,9 @@ struct transparent_less_than {
 
     template<typename T, typename U>
     constexpr auto operator()( T &&lhs, U &&rhs ) const noexcept
+    // NOLINTNEXTLINE(cata-use-localized-sorting)
     -> decltype( std::forward<T>( lhs ) < std::forward<U>( rhs ) ) {
+        // NOLINTNEXTLINE(cata-use-localized-sorting)
         return std::forward<T>( lhs ) < std::forward<U>( rhs );
     }
 };
@@ -49,7 +51,7 @@ class flat_set : private Compare, Data
         using reverse_iterator = const_reverse_iterator;
 
         flat_set() = default;
-        flat_set( const key_compare &kc ) : Compare( kc ) {}
+        explicit flat_set( const key_compare &kc ) : Compare( kc ) {}
         template<typename InputIt>
         flat_set( InputIt first, InputIt last ) : Data( first, last ) {
             sort_data();
@@ -216,4 +218,4 @@ class flat_set : private Compare, Data
 
 } // namespace cata
 
-#endif // CATA_FLAT_SET
+#endif // CATA_SRC_FLAT_SET_H

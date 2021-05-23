@@ -1,12 +1,12 @@
 #pragma once
-#ifndef MOD_TILESET_H
-#define MOD_TILESET_H
+#ifndef CATA_SRC_MOD_TILESET_H
+#define CATA_SRC_MOD_TILESET_H
 
-#include <string>
+#include <string> // IWYU pragma: keep
 #include <vector>
 
-class mod_tileset;
 class JsonObject;
+class mod_tileset;
 
 extern std::vector<mod_tileset> all_mod_tilesets;
 
@@ -45,4 +45,4 @@ class mod_tileset
         std::vector<std::string> compatibility;
 };
 
-#endif
+#endif // CATA_SRC_MOD_TILESET_H

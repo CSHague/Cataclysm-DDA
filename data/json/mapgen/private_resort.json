@@ -34,8 +34,8 @@
       ],
       "palettes": [ "p_resort_palette_main_floor" ],
       "place_signs": [
-        { "signage": "Private property. No trepassing!", "x": 4, "y": 0 },
-        { "signage": "Private property. No trepassing!", "x": 18, "y": 0 }
+        { "signage": "Private property.  No trespassing!", "x": 4, "y": 0 },
+        { "signage": "Private property.  No trespassing!", "x": 18, "y": 0 }
       ],
       "place_items": [
         { "chance": 40, "item": "alcohol", "x": 7, "y": 13, "repeat": [ 2, 8 ] },
@@ -446,8 +446,8 @@
       ],
       "palettes": [ "p_resort_palette_main_floor" ],
       "place_signs": [
-        { "signage": "Private property. No trepassing!", "x": 8, "y": 24 },
-        { "signage": "Private property. No trepassing!", "x": 17, "y": 24 }
+        { "signage": "Private property.  No trespassing!", "x": 8, "y": 24 },
+        { "signage": "Private property.  No trespassing!", "x": 17, "y": 24 }
       ],
       "place_vehicles": [ { "vehicle": "limousine", "x": 11, "y": 18, "chance": 75, "rotation": 90, "status": -1 } ],
       "place_monsters": [ { "monster": "GROUP_RESORT_MIXED", "x": [ 0, 23 ], "y": [ 0, 23 ], "repeat": [ 1, 2 ], "density": 0.75 } ]
@@ -1169,7 +1169,7 @@
         "***WWWWWWWWWWWWWWWWWW***"
       ],
       "palettes": [ "p_resort_palette_basement" ],
-      "place_item": [ { "item": "toolbox", "repeat": 1, "x": 8, "y": 11 } ],
+      "place_loot": [ { "group": "tools_toolbox", "repeat": 1, "x": 8, "y": 11 } ],
       "items": {
         "S": { "item": "preserved_food", "chance": 50, "repeat": [ 0, 3 ] },
         "f": { "item": "butcher_raw_meat", "chance": 50, "repeat": [ 0, 6 ] }
@@ -1613,7 +1613,7 @@
             [ "roof_6x6_survivor", 5 ]
           ],
           "x": [ 2, 10 ],
-          "y": [ 2, 6 ]
+          "y": 1
         }
       ],
       "place_items": [ { "chance": 10, "item": "roof_trash", "x": [ 0, 18 ], "y": [ 0, 7 ], "repeat": [ 3, 10 ] } ]

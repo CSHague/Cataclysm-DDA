@@ -1,6 +1,6 @@
 #pragma once
-#ifndef CATA_SAFE_REFERENCE_H
-#define CATA_SAFE_REFERENCE_H
+#ifndef CATA_SRC_SAFE_REFERENCE_H
+#define CATA_SRC_SAFE_REFERENCE_H
 
 /**
 A pair of classes to provide safe references to objects.
@@ -48,7 +48,7 @@ class safe_reference
     private:
         friend class safe_reference_anchor;
 
-        safe_reference( const std::shared_ptr<T> &p ) : impl( p ) {}
+        explicit safe_reference( const std::shared_ptr<T> &p ) : impl( p ) {}
 
         std::weak_ptr<T> impl;
 };
@@ -70,4 +70,4 @@ class safe_reference_anchor
         std::shared_ptr<empty> impl;
 };
 
-#endif // CATA_SAFE_REFERENCE_H
+#endif // CATA_SRC_SAFE_REFERENCE_H

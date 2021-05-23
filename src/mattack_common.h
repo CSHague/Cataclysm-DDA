@@ -1,9 +1,10 @@
 #pragma once
-#ifndef MATTACK_COMMON_H
-#define MATTACK_COMMON_H
+#ifndef CATA_SRC_MATTACK_COMMON_H
+#define CATA_SRC_MATTACK_COMMON_H
 
+#include <string> // IWYU pragma: keep
 #include <memory>
-#include <string>
+#include <type_traits>
 
 #include "clone_ptr.h"
 
@@ -18,7 +19,7 @@ class mattack_actor
     protected:
         mattack_actor() = default;
     public:
-        mattack_actor( const mattack_id &new_id ) : id( new_id ) { }
+        explicit mattack_actor( const mattack_id &new_id ) : id( new_id ) { }
 
         mattack_id id;
         bool was_loaded = false;
@@ -41,7 +42,7 @@ struct mtype_special_attack {
 
     public:
         mtype_special_attack( const mattack_id &id, mon_action_attack f );
-        mtype_special_attack( std::unique_ptr<mattack_actor> f ) : actor( std::move( f ) ) { }
+        explicit mtype_special_attack( std::unique_ptr<mattack_actor> f ) : actor( std::move( f ) ) { }
 
         const mattack_actor &operator*() const {
             return *actor;
@@ -56,4 +57,4 @@ struct mtype_special_attack {
         }
 };
 
-#endif
+#endif // CATA_SRC_MATTACK_COMMON_H

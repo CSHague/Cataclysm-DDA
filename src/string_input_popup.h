@@ -1,19 +1,21 @@
 #pragma once
-#ifndef STRING_INPUT_POPUP_H
-#define STRING_INPUT_POPUP_H
+#ifndef CATA_SRC_STRING_INPUT_POPUP_H
+#define CATA_SRC_STRING_INPUT_POPUP_H
 
-#include <cstdint>
 #include <cstddef>
+#include <cstdint>
 #include <functional>
+#include <iosfwd>
 #include <map>
 #include <memory>
-#include <string>
+#include <vector>
 
 #include "color.h"
 #include "cursesdef.h"
 
 class input_context;
 class utf8_wrapper;
+struct point;
 
 /**
  * Shows a window querying the user for input.
@@ -58,14 +60,25 @@ class string_input_popup // NOLINT(cata-xy)
         int _max_length = -1;
         bool _only_digits = false;
         bool _hist_use_uilist = true;
+        bool _ignore_custom_actions = true;
         int _startx = 0;
         int _starty = 0;
         int _endx = 0;
         int _position = -1;
+        // in output (console) cells, not characters of the string!
+        int shift = 0;
         int _hist_str_ind = 0;
         //Counts only when @_hist_use_uilist is false
         const size_t _hist_max_size = 100;
 
+        // Cache when using the default window
+        int w_width = 0;
+        int w_height = 0;
+        std::vector<std::string> descformatted;
+        std::vector<std::string> title_split;
+        int titlesize = 0;
+
+        bool custom_window = false;
         catacurses::window w;
 
         std::unique_ptr<input_context> ctxt_ptr;
@@ -73,6 +86,7 @@ class string_input_popup // NOLINT(cata-xy)
 
         bool _canceled = false;
         bool _confirmed = false;
+        bool _handled = false;
 
         void create_window();
         void create_context();
@@ -80,7 +94,7 @@ class string_input_popup // NOLINT(cata-xy)
         void show_history( utf8_wrapper &ret );
         void add_to_history( const std::string &value ) const;
         void update_input_history( utf8_wrapper &ret, bool up );
-        void draw( const utf8_wrapper &ret, const utf8_wrapper &edit, int shift ) const;
+        void draw( const utf8_wrapper &ret, const utf8_wrapper &edit ) const;
 
     public:
         string_input_popup();
@@ -95,7 +109,7 @@ class string_input_popup // NOLINT(cata-xy)
         }
         /**
          * Set / get the text that can be modified by the user.
-         * Note that cancelling the query makes this an empty string.
+         * Note that canceling the query makes this an empty string.
          * It's optional default is an empty string.
          */
         /**@{*/
@@ -156,13 +170,26 @@ class string_input_popup // NOLINT(cata-xy)
             return *this;
         }
         /**
+         * If true and the custom input context returns an input action, the
+         * action is not handled at all and left to be handled by the caller.
+         * Otherwise the action is always handled as an input event to the popup.
+         * The caller can use @ref handled to check whether the last input is handled.
+         */
+        string_input_popup &ignore_custom_actions( const bool value ) {
+            _ignore_custom_actions = value;
+            return *this;
+        }
+        /**
          * Set the window area where to display the input text. If this is set,
          * the class will not create a separate window and *only* the editable
          * text will be printed at the given part of the given window.
          * Integer parameters define the area (one line) where the editable
          * text is printed.
+         *
+         * This method only has effect before the default window is initialized.
+         * After that calls to this method are just ignored.
          */
-        string_input_popup &window( const catacurses::window &w, int startx, int starty, int endx );
+        string_input_popup &window( const catacurses::window &w, const point &start, int endx );
         /**
          * Set / get the input context that is used to gather user input.
          * The class will create its own context if none is set here.
@@ -238,10 +265,17 @@ class string_input_popup // NOLINT(cata-xy)
             return _confirmed;
         }
         /**
+         * Returns false if the last input was unhandled. Useful to avoid handling
+         * input already handled by the popup itself.
+         */
+        bool handled() const {
+            return _handled;
+        }
+        /**
          * Edit values in place. This combines: calls to @ref text to set the
          * current value, @ref query to get user input and setting the
          * value back into the parameter object (when the popup was not
-         * canceled). Cancelling the popup keeps the value unmodified.
+         * canceled). Canceling the popup keeps the value unmodified.
          */
         /**@{*/
         void edit( std::string &value );
@@ -254,4 +288,4 @@ class string_input_popup // NOLINT(cata-xy)
         std::map<long, std::function<bool()>> callbacks;
 };
 
-#endif
+#endif // CATA_SRC_STRING_INPUT_POPUP_H
