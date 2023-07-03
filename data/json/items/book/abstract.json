@@ -34,8 +34,8 @@
     "price": 1999,
     "price_postapoc": 1500,
     "material": [ "paper", "cardboard" ],
-    "bashing": 2,
-    "copy-from": "book_fict_tpl"
+    "copy-from": "book_fict_tpl",
+    "melee_damage": { "bash": 2 }
   },
   {
     "abstract": "book_fict_soft_tpl",
@@ -48,9 +48,9 @@
     "price": 799,
     "price_postapoc": 1500,
     "material": [ "paper" ],
-    "bashing": 1,
     "flags": [  ],
-    "copy-from": "book_fict_tpl"
+    "copy-from": "book_fict_tpl",
+    "melee_damage": { "bash": 1 }
   },
   {
     "abstract": "book_nonf_hard_tpl",
@@ -62,9 +62,9 @@
     "price": 1450,
     "price_postapoc": 2900,
     "material": [ "paper", "cardboard" ],
-    "bashing": 2,
     "chapters": 18,
-    "copy-from": "book_nonf_tpl"
+    "copy-from": "book_nonf_tpl",
+    "melee_damage": { "bash": 2 }
   },
   {
     "abstract": "book_nonf_soft_tpl",
@@ -76,9 +76,9 @@
     "price": 990,
     "price_postapoc": 2700,
     "material": [ "paper" ],
-    "bashing": 1,
     "chapters": 18,
-    "copy-from": "book_nonf_tpl"
+    "copy-from": "book_nonf_tpl",
+    "melee_damage": { "bash": 1 }
   },
   {
     "abstract": "book_fict_soft_pulp_tpl",
@@ -139,8 +139,7 @@
     "description": "An ordinary book.  Or is it?  It is.",
     "weight": "600 g",
     "price": 1000,
-    "price_postapoc": 5000,
-    "flags": [ "TINDER" ],
+    "price_postapoc": 200,
     "skill": "dodge",
     "intelligence": 4,
     "time": "10 m",
@@ -166,6 +165,15 @@
     "time": "36 m",
     "copy-from": "book_nonf_soft_tpl",
     "relative": { "price": 400, "price_postapoc": -2600, "intelligence": 3 }
+  },
+  {
+    "abstract": "book_pulp_newage_tpl",
+    "type": "BOOK",
+    "name": { "str": "Generic New-Age Book" },
+    "description": "This is a template for pulp new-age books.  They're theoretically nonfiction.",
+    "copy-from": "book_fict_soft_pulp_tpl",
+    "weight": "250 g",
+    "relative": { "chapters": -6, "price": 2500, "price_postapoc": -100 }
   },
   {
     "abstract": "book_nonf_hard_sports_tpl",
@@ -212,7 +220,6 @@
     "symbol": "?",
     "looks_like": "story_book",
     "color": "dark_gray",
-    "flags": [ "TINDER" ],
     "intelligence": 6,
     "time": "35 m",
     "chapters": 30,
@@ -333,8 +340,22 @@
     "fun": 1
   },
   {
+    "abstract": "book_antho_tpl",
+    "type": "BOOK",
+    "name": { "str": "Generic Anthology Book" },
+    "description": "template for a collection of stories",
+    "intelligence": 5,
+    "symbol": "?",
+    "looks_like": "story_book",
+    "color": "yellow",
+    "time": "15 m",
+    "chapters": 16,
+    "fun": 2
+  },
+  {
     "abstract": "book_martial",
     "type": "BOOK",
+    "category": "manuals",
     "name": { "str": "martial art manual" },
     "weight": "150 g",
     "volume": "250 ml",
@@ -346,5 +367,35 @@
     "use_action": [ "MA_MANUAL" ],
     "intelligence": 9,
     "time": "10 m"
+  },
+  {
+    "type": "GENERIC",
+    "id": "book_ruined",
+    "category": "books",
+    "symbol": ",",
+    "color": "white",
+    "name": { "str": "ruined book" },
+    "description": "A ruined book.  Someone has thoroughly ruined this book by ripping pages out and covering the remainder in… is that paint?",
+    "price": 0,
+    "price_postapoc": 0,
+    "material": [ "paper" ],
+    "flags": [ "TRADER_AVOID" ],
+    "weight": "1587 g",
+    "volume": "1500 ml"
+  },
+  {
+    "type": "GENERIC",
+    "id": "book_pieces",
+    "category": "books",
+    "symbol": ",",
+    "color": "white",
+    "name": { "str_sp": "pieces of books" },
+    "description": "Scraps of paper that used to be part of a book.  Completely useless now.",
+    "price": 0,
+    "price_postapoc": 0,
+    "material": [ "paper" ],
+    "flags": [ "TRADER_AVOID" ],
+    "weight": "120 g",
+    "volume": "200 ml"
   }
 ]

@@ -21,7 +21,8 @@
 #include "json.h"
 
 // copypasta: file_finder.cpp
-static std::vector<std::string> get_files_from_path( std::string extension, std::string root_path,
+static std::vector<std::string> get_files_from_path_( const std::string &extension,
+        std::string root_path,
         bool recursive_search, bool match_extension )
 {
     std::vector<std::string> files;
@@ -32,12 +33,14 @@ static std::vector<std::string> get_files_from_path( std::string extension, std:
         root_path = ".";
     }
 
-    std::stack<std::string> directories, tempstack;
+    std::stack<std::string> directories;
+    std::stack<std::string> tempstack;
     directories.push( root_path );
     std::string path;
 
     while( !directories.empty() ) {
         path = directories.top();
+        std::string path_with_slash = path + "/";
         directories.pop();
 
         DIR *root = opendir( path.c_str() );
@@ -52,7 +55,7 @@ static std::vector<std::string> get_files_from_path( std::string extension, std:
                 if( stat( root_file->d_name, &_buff ) != 0x4 ) {
                     // ignore '.' and '..' folder names, which are current and parent folder relative paths
                     if( ( strcmp( root_file->d_name, "." ) != 0 ) && ( strcmp( root_file->d_name, ".." ) != 0 ) ) {
-                        std::string subpath = path + "/" + root_file->d_name;
+                        std::string subpath = path_with_slash + root_file->d_name;
 
                         if( recursive_search ) {
                             subdir = opendir( subpath.c_str() );
@@ -66,7 +69,7 @@ static std::vector<std::string> get_files_from_path( std::string extension, std:
                 // check to see if it is a file with the appropriate extension
                 std::string tmp = root_file->d_name;
                 if( tmp.find( c_extension, match_extension ? tmp.size() - extsz : 0 ) != std::string::npos ) {
-                    std::string fullpath = path + "/" + tmp;
+                    std::string fullpath = path_with_slash + tmp;
                     files.push_back( fullpath );
                 }
             }
@@ -83,14 +86,14 @@ static std::vector<std::string> get_files_from_path( std::string extension, std:
 }
 
 // copypasta: init.cpp
-static void load_object( JsonObject &jo )
+static void load_object( TextJsonObject &jo )
 {
     std::string type = jo.get_string( "type" );
     if( !jo.has_string( "type" ) ) {
         jo.throw_error( "JSON object has no type" );
     }
 }
-static void load_all_from_json( JsonIn &jsin )
+static void load_all_from_json( TextJsonIn &jsin )
 {
     char ch;
     jsin.eat_whitespace();
@@ -98,7 +101,7 @@ static void load_all_from_json( JsonIn &jsin )
     ch = jsin.peek();
     if( ch == '{' ) {
         // find type and dispatch single object
-        JsonObject jo = jsin.get_object();
+        TextJsonObject jo = jsin.get_object();
         load_object( jo );
         jo.finish();
         // if there's anything else in the file, it's an error.
@@ -121,7 +124,7 @@ static void load_all_from_json( JsonIn &jsin )
                 err << ch << "', not '{'";
                 jsin.error( err.str() );
             }
-            JsonObject jo = jsin.get_object();
+            TextJsonObject jo = jsin.get_object();
             load_object( jo );
             jo.finish();
         }
@@ -137,7 +140,7 @@ static void load_json_dir( const std::string &dirname )
 {
     // get a list of all files in the directory
     std::vector<std::string> dir =
-        get_files_from_path( ".json", dirname, true, true );
+        get_files_from_path_( ".json", dirname, true, true );
     // iterate over each file
     std::vector<std::string>::iterator it;
     for( it = dir.begin(); it != dir.end(); it++ ) {
@@ -153,21 +156,25 @@ static void load_json_dir( const std::string &dirname )
         infile.close();
         // parse it
         try {
-            JsonIn jsin( iss );
+            TextJsonIn jsin( iss );
             load_all_from_json( jsin );
         } catch( const JsonError &err ) {
-            throw std::runtime_error( *( it ) + ": " + err.what() );
+            throw std::runtime_error( *it + ": " + err.what() );
         }
     }
 }
 
 int main( int, char ** )
 {
-    setlocale( LC_ALL, "" );
+    char *result = setlocale( LC_ALL, "" );
+    if( !result ) {
+        std::cerr << "Failed to set locale\n";
+        return 1;
+    }
     try {
         load_json_dir( "data/json" );
     } catch( const std::exception &err ) {
-        printf( "Error: %s\n", err.what() );
+        std::cerr << "Error: " << err.what() << "\n";
         return 1;
     }
     return 0;

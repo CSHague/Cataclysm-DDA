@@ -260,46 +260,6 @@
   },
   {
     "type": "overmap_terrain",
-    "id": "apartments_con_tower_NW",
-    "copy-from": "apartments_tower_any"
-  },
-  {
-    "type": "overmap_terrain",
-    "id": "apartments_con_tower_NE",
-    "copy-from": "apartments_tower_any"
-  },
-  {
-    "type": "overmap_terrain",
-    "id": "apartments_con_tower_SW",
-    "copy-from": "apartments_tower_any"
-  },
-  {
-    "type": "overmap_terrain",
-    "id": "apartments_con_tower_SE",
-    "copy-from": "apartments_tower_any"
-  },
-  {
-    "type": "overmap_terrain",
-    "id": "apartments_mod_tower_NW",
-    "copy-from": "apartments_tower_any"
-  },
-  {
-    "type": "overmap_terrain",
-    "id": "apartments_mod_tower_NE",
-    "copy-from": "apartments_tower_any"
-  },
-  {
-    "type": "overmap_terrain",
-    "id": "apartments_mod_tower_SW",
-    "copy-from": "apartments_tower_any"
-  },
-  {
-    "type": "overmap_terrain",
-    "id": "apartments_mod_tower_SE",
-    "copy-from": "apartments_tower_any"
-  },
-  {
-    "type": "overmap_terrain",
     "id": "apartments_con_tower_110",
     "copy-from": "apartments_tower_any"
   },
@@ -470,48 +430,6 @@
     "copy-from": "homelesscamp",
     "sym": "\u00C5",
     "color": "brown"
-  },
-  {
-    "type": "overmap_terrain",
-    "id": "trailerparksmall0",
-    "copy-from": "trailerparksmall0",
-    "sym": "\u00F9",
-    "color": "white"
-  },
-  {
-    "type": "overmap_terrain",
-    "id": "trailerparksmall0_roof",
-    "copy-from": "trailerparksmall0_roof",
-    "sym": "\u00F9",
-    "color": "white"
-  },
-  {
-    "type": "overmap_terrain",
-    "id": "trailerparksmall1",
-    "copy-from": "trailerparksmall1",
-    "sym": "\u00F9",
-    "color": "white"
-  },
-  {
-    "type": "overmap_terrain",
-    "id": "trailerparksmall1_roof",
-    "copy-from": "trailerparksmall1_roof",
-    "sym": "\u00F9",
-    "color": "white"
-  },
-  {
-    "type": "overmap_terrain",
-    "id": "trailerparksmall2",
-    "copy-from": "trailerparksmall2",
-    "sym": "\u00F9",
-    "color": "white"
-  },
-  {
-    "type": "overmap_terrain",
-    "id": "trailerparksmall2_roof",
-    "copy-from": "trailerparksmall2_roof",
-    "sym": "\u00F9",
-    "color": "white"
   },
   {
     "type": "overmap_terrain",

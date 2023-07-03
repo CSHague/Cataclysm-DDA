@@ -27,7 +27,8 @@
       { "item": "bone_human", "count": [ 5, 8 ], "prob": 100 },
       { "item": "human_flesh", "count": [ 5, 8 ], "prob": 100 },
       { "item": "hstomach", "prob": 100 },
-      { "group": "misc_smoking", "prob": 30 }
+      { "group": "pocket_cigar", "prob": 15 },
+      { "group": "misc_smoking_legal", "prob": 30 }
     ]
   },
   {
@@ -71,7 +72,8 @@
           { "item": "two_way_radio", "prob": 50, "charges": [ 0, 100 ] },
           { "item": "grenade", "prob": 5 },
           { "group": "wallets_military", "prob": 5 },
-          { "group": "misc_smoking", "prob": 30 }
+          { "group": "pocket_cigar", "prob": 15 },
+          { "group": "misc_smoking_legal", "prob": 30 }
         ]
       },
       { "item": "bone_human", "count": [ 5, 8 ], "prob": 100 },
@@ -88,6 +90,8 @@
       [ "corpse_generic_boy", 15 ],
       [ "corpse_generic_girl", 15 ],
       [ "corpse_generic_human", 10 ],
+      [ "corpse_generic_gunned", 40 ],
+      [ "corpse_generic_infected", 40 ],
       [ "corpse_bloody", 10 ],
       [ "corpse_painful", 10 ],
       [ "corpse_scorched", 10 ],
@@ -99,6 +103,11 @@
       [ "corpse_child_gunned", 10 ],
       [ "corpse_oldwoman_jewelry", 10 ]
     ]
+  },
+  {
+    "id": "corpses_bodybag",
+    "type": "item_group",
+    "items": [ { "group": "corpses", "prob": 100, "container-item": "bag_body_bag" } ]
   },
   {
     "id": "corpse_male",

@@ -3,6 +3,7 @@
 
 #include <iosfwd>
 #include <memory>
+#include <optional>
 #include <set>
 #include <type_traits>
 #include <unordered_map>
@@ -13,10 +14,9 @@
 #include "cata_variant.h"
 #include "event.h"
 #include "event_subscriber.h"
-#include "optional.h"
 #include "string_id.h"
 
-class JsonIn;
+class JsonObject;
 class JsonOut;
 class event_statistic;
 class event_transformation;
@@ -50,7 +50,7 @@ struct event_summary {
     void add( const event_summary & );
 
     void serialize( JsonOut & ) const;
-    void deserialize( JsonIn & );
+    void deserialize( const JsonObject &jo );
 };
 
 class event_multiset
@@ -90,16 +90,16 @@ class event_multiset
         int total( const std::string &field, const cata::event::data_type &criteria ) const;
         int minimum( const std::string &field ) const;
         int maximum( const std::string &field ) const;
-        cata::optional<summaries_type::value_type> first() const;
-        cata::optional<summaries_type::value_type> last() const;
+        std::optional<summaries_type::value_type> first() const;
+        std::optional<summaries_type::value_type> last() const;
 
         void add( const cata::event & );
         void add( const summaries_type::value_type & );
 
         void serialize( JsonOut & ) const;
-        void deserialize( JsonIn & );
+        void deserialize( const JsonObject &jo );
     private:
-        event_type type_;
+        event_type type_; // NOLINT(cata-serialize)
         summaries_type summaries_;
 };
 
@@ -214,20 +214,22 @@ class stats_tracker : public event_subscriber
         void notify( const cata::event & ) override;
 
         void serialize( JsonOut & ) const;
-        void deserialize( JsonIn & );
+        void deserialize( const JsonObject &jo );
     private:
         void unwatch_all();
 
         std::unordered_map<event_type, event_multiset> data;
 
+        // NOLINTNEXTLINE(cata-serialize)
         std::unordered_map<event_type, watcher_set<event_multiset_watcher>> event_type_watchers;
         std::unordered_map<string_id<event_transformation>, watcher_set<event_multiset_watcher>>
-                event_transformation_watchers;
+                event_transformation_watchers; // NOLINT(cata-serialize)
+        // NOLINTNEXTLINE(cata-serialize)
         std::unordered_map<string_id<event_statistic>, watcher_set<stat_watcher>> stat_watchers;
         std::unordered_map<string_id<event_transformation>, std::unique_ptr<stats_tracker_state>>
-                event_transformation_states;
+                event_transformation_states; // NOLINT(cata-serialize)
         std::unordered_map<string_id<event_statistic>, std::unique_ptr<stats_tracker_state>>
-                stat_states;
+                stat_states; // NOLINT(cata-serialize)
 
         std::unordered_set<string_id<score>> initial_scores;
 };

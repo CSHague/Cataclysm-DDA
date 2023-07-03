@@ -61,13 +61,19 @@ int main( int argc, char *argv[] )
     }
 
     if( in.str().empty() ) {
-        std::cout << "Error, input empty." << std::endl;
+        std::cout << "Error, " << ( filename.empty() ? "input" : filename ) << " is empty." << std::endl;
         exit( EXIT_FAILURE );
     }
     JsonOut jsout( out, true );
-    JsonIn jsin( in );
+    TextJsonIn jsin( in );
 
-    formatter::format( jsin, jsout );
+    try {
+        formatter::format( jsin, jsout );
+    } catch( const JsonError &e ) {
+        std::cout << "JSON error in " << ( filename.empty() ? "input" : filename ) << std::endl;
+        std::cout << e.what() << std::endl;
+        exit( EXIT_FAILURE );
+    }
 
     out << std::endl;
 
@@ -93,7 +99,7 @@ int main( int argc, char *argv[] )
             std::ofstream fout( filename, std::ios::binary | std::ios::trunc );
             fout << out.str();
             fout.close();
-            std::cout << color_bad << "Needs linting : " << color_end << filename << std::endl;
+            std::cout << color_bad << "Has been linted : " << color_end << filename << std::endl;
             std::cout << "Please read doc/JSON_STYLE.md" << std::endl;
             exit( EXIT_FAILURE );
         }

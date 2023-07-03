@@ -4,7 +4,7 @@
     "id": "evac_broker",
     "//": "Appears in the refugee center as a bulk trader.  Promotes production of nonperishable food.",
     "name_suffix": "Broker",
-    "class": "NC_SCAVENGER",
+    "class": "NC_TEAMSTER",
     "attitude": 0,
     "mission": 3,
     "chat": "TALK_FREE_MERCHANT_STOCKS",
@@ -91,6 +91,7 @@
         "jerky",
         "meat_smoked",
         "fish_smoked",
+        "dry_meat",
         "dry_veggy",
         "dry_fruit",
         "cooking_oil",
@@ -221,7 +222,7 @@
     "count": 50,
     "end": {
       "effect": [
-        { "u_buy_item": "FMCNote", "count": 25 },
+        { "u_spawn_item": "FMCNote", "count": 25 },
         { "u_add_var": "FMBroker_Mission1", "type": "mission", "context": "flag", "value": "yes" }
       ]
     },

@@ -6,7 +6,7 @@
     "reload_noise_volume": 10,
     "name": { "str": "2 Shot Special" },
     "//": "It's hard to say just how big this is, although it's (very large) pistol sized. But it is a handmade weapon.",
-    "description": "A crudely made double barrel pistol firing 38 special ammo.  Unfortunately, the name is less about the double barrels and more about the number of shots you'll get before it breaks down on you.",
+    "description": "A crudely made double barrel pistol firing .38 Special ammo.  Unfortunately, the name is less about the double barrels and more about the number of shots you'll get before it breaks down on you.",
     "ascii_picture": "2_shot_special",
     "weight": "750 g",
     "volume": "700 ml",
@@ -14,7 +14,6 @@
     "price": 2000,
     "price_postapoc": 500,
     "to_hit": -1,
-    "bashing": 3,
     "material": [ "steel" ],
     "symbol": "(",
     "color": "brown",
@@ -26,17 +25,11 @@
     "blackpowder_tolerance": 60,
     "clip_size": 2,
     "reload": 200,
-    "valid_mod_locations": [
-      [ "accessories", 4 ],
-      [ "grip", 1 ],
-      [ "sights", 1 ],
-      [ "underbarrel", 1 ],
-      [ "rail mount", 1 ],
-      [ "stock mount", 1 ]
-    ],
+    "valid_mod_locations": [ [ "grip", 1 ], [ "sights", 1 ], [ "underbarrel", 1 ], [ "rail mount", 1 ], [ "stock mount", 1 ] ],
     "faults": [ "fault_gun_blackpowder", "fault_gun_dirt" ],
-    "flags": [ "RELOAD_ONE", "RELOAD_EJECT" ],
-    "pocket_data": [ { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "38": 2 } } ]
+    "flags": [ "RELOAD_ONE", "RELOAD_EJECT", "EASY_CLEAN" ],
+    "pocket_data": [ { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "38": 2 } } ],
+    "melee_damage": { "bash": 3 }
   },
   {
     "id": "cop_38",
@@ -51,7 +44,6 @@
     "price": 120000,
     "price_postapoc": 1000,
     "to_hit": -1,
-    "bashing": 3,
     "material": [ "steel", "wood" ],
     "ammo": [ "357mag", "38" ],
     "range": 3,
@@ -60,8 +52,8 @@
     "blackpowder_tolerance": 96,
     "clip_size": 4,
     "valid_mod_locations": [
-      [ "accessories", 2 ],
       [ "barrel", 1 ],
+      [ "belt_clip", 1 ],
       [ "bore", 1 ],
       [ "grip", 1 ],
       [ "mechanism", 2 ],
@@ -70,8 +62,9 @@
       [ "underbarrel mount", 1 ]
     ],
     "faults": [ "fault_gun_blackpowder", "fault_gun_dirt" ],
-    "flags": [ "RELOAD_ONE", "NEVER_JAMS", "RELOAD_EJECT" ],
-    "pocket_data": [ { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "357mag": 4, "38": 4 } } ]
+    "flags": [ "RELOAD_ONE", "NEVER_JAMS", "RELOAD_EJECT", "EASY_CLEAN" ],
+    "pocket_data": [ { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "357mag": 4, "38": 4 } } ],
+    "melee_damage": { "bash": 3 }
   },
   {
     "id": "model_10_revolver",
@@ -86,7 +79,6 @@
     "price": 42400,
     "price_postapoc": 1250,
     "to_hit": -2,
-    "bashing": 9,
     "material": [ "steel", "wood" ],
     "color": "dark_gray",
     "ammo": [ "38" ],
@@ -97,12 +89,55 @@
     "pocket_data": [
       {
         "pocket_type": "MAGAZINE",
-        "holster": true,
         "rigid": true,
         "ammo_restriction": { "38": 6 },
         "allowed_speedloaders": [ "38_speedloader6" ]
       }
-    ]
+    ],
+    "melee_damage": { "bash": 9 }
+  },
+  {
+    "id": "mr73",
+    "copy-from": "pistol_revolver",
+    "looks_like": "sw_619",
+    "type": "GUN",
+    "name": { "str_sp": "Manurhin MR 73" },
+    "description": "A finely made .357 Magnum revolver with a 4 inch barrel.  It has adjustable sights, big plastic grips and a very smooth trigger.",
+    "weight": "970 g",
+    "volume": "600 ml",
+    "longest_side": "273 mm",
+    "price": 360000,
+    "price_postapoc": 2000,
+    "built_in_mods": [ "match_trigger" ],
+    "default_mods": [ "pistol_grip" ],
+    "to_hit": -2,
+    "material": [ "steel", "plastic" ],
+    "symbol": "(",
+    "color": "light_gray",
+    "ammo": [ "357mag", "38" ],
+    "dispersion": 280,
+    "durability": 10,
+    "blackpowder_tolerance": 56,
+    "clip_size": 6,
+    "valid_mod_locations": [
+      [ "barrel", 1 ],
+      [ "bore", 1 ],
+      [ "grip", 1 ],
+      [ "mechanism", 4 ],
+      [ "rail mount", 1 ],
+      [ "sights mount", 1 ],
+      [ "stock mount", 1 ],
+      [ "underbarrel mount", 1 ]
+    ],
+    "pocket_data": [
+      {
+        "pocket_type": "MAGAZINE",
+        "rigid": true,
+        "ammo_restriction": { "357mag": 6, "38": 6 },
+        "allowed_speedloaders": [ "38_speedloader6" ]
+      }
+    ],
+    "melee_damage": { "bash": 9 }
   },
   {
     "id": "rifle_38",
@@ -113,12 +148,11 @@
     "description": "A home-made rifle.  It is simply a pipe attached to a stock, with a hammer to strike the single round it holds.",
     "ascii_picture": "ps_pipe_gun",
     "weight": "2114 g",
-    "volume": "2 L",
+    "volume": "1610 ml",
     "longest_side": "100 cm",
     "price": 10000,
     "price_postapoc": 500,
     "to_hit": -1,
-    "bashing": 10,
     "material": [ "steel", "wood" ],
     "color": "brown",
     "ammo": [ "38" ],
@@ -130,20 +164,20 @@
     "loudness": 25,
     "clip_size": 1,
     "reload": 200,
-    "barrel_volume": "750 ml",
+    "barrel_volume": "360 ml",
     "valid_mod_locations": [
-      [ "accessories", 2 ],
       [ "muzzle", 1 ],
       [ "sling", 1 ],
-      [ "stock", 1 ],
+      [ "stock mount", 1 ],
       [ "grip mount", 1 ],
       [ "rail mount", 1 ],
       [ "sights mount", 1 ],
       [ "underbarrel mount", 1 ]
     ],
     "faults": [ "fault_gun_blackpowder", "fault_gun_dirt" ],
-    "flags": [ "RELOAD_EJECT" ],
-    "pocket_data": [ { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "38": 1 } } ]
+    "flags": [ "RELOAD_EJECT", "EASY_CLEAN" ],
+    "pocket_data": [ { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "38": 1 } } ],
+    "melee_damage": { "bash": 10 }
   },
   {
     "id": "ruger_lcr_38",
@@ -158,7 +192,6 @@
     "price": 54500,
     "price_postapoc": 1000,
     "to_hit": -2,
-    "bashing": 8,
     "material": [ "steel", "aluminum", "plastic" ],
     "symbol": "(",
     "color": "dark_gray",
@@ -169,7 +202,6 @@
     "blackpowder_tolerance": 56,
     "clip_size": 5,
     "valid_mod_locations": [
-      [ "accessories", 2 ],
       [ "barrel", 1 ],
       [ "bore", 1 ],
       [ "grip", 1 ],
@@ -182,12 +214,12 @@
     "pocket_data": [
       {
         "pocket_type": "MAGAZINE",
-        "holster": true,
         "rigid": true,
         "ammo_restriction": { "38": 5 },
         "allowed_speedloaders": [ "38_speedloader5" ]
       }
-    ]
+    ],
+    "melee_damage": { "bash": 8 }
   },
   {
     "id": "sw_619",
@@ -195,14 +227,13 @@
     "//": "Tileset whitelist for revolvers.",
     "type": "GUN",
     "name": { "str_sp": "S&W 619" },
-    "description": "A seven-round .38 revolver sold by Smith & Wesson.  It features a fixed rear sight and a reinforced frame.",
+    "description": "A seven-round .357 revolver sold by Smith & Wesson.  Can also fire .38 Special.  It features a fixed rear sight and a reinforced frame.",
     "weight": "1074 g",
     "volume": "608 ml",
     "longest_side": "278 mm",
     "price": 62000,
     "price_postapoc": 1250,
     "to_hit": -2,
-    "bashing": 9,
     "material": [ "steel", "plastic" ],
     "symbol": "(",
     "color": "light_gray",
@@ -212,7 +243,6 @@
     "blackpowder_tolerance": 56,
     "clip_size": 7,
     "valid_mod_locations": [
-      [ "accessories", 2 ],
       [ "barrel", 1 ],
       [ "bore", 1 ],
       [ "grip", 1 ],
@@ -225,11 +255,11 @@
     "pocket_data": [
       {
         "pocket_type": "MAGAZINE",
-        "holster": true,
         "rigid": true,
         "ammo_restriction": { "357mag": 7, "38": 7 },
         "allowed_speedloaders": [ "38_speedloader" ]
       }
-    ]
+    ],
+    "melee_damage": { "bash": 9 }
   }
 ]

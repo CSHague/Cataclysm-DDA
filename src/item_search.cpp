@@ -3,14 +3,16 @@
 #include <map>
 #include <utility>
 
+#include "avatar.h"
 #include "cata_utility.h"
 #include "item.h"
 #include "item_category.h"
+#include "itype.h"
 #include "material.h"
 #include "requirements.h"
 #include "type_id.h"
 
-static std::pair<std::string, std::string> get_both( const std::string &a );
+static std::pair<std::string, std::string> get_both( std::string_view a );
 
 std::function<bool( const item & )> basic_item_filter( std::string filter )
 {
@@ -32,17 +34,14 @@ std::function<bool( const item & )> basic_item_filter( std::string filter )
         case 'm':
             return [filter]( const item & i ) {
                 return std::any_of( i.made_of().begin(), i.made_of().end(),
-                [&filter]( const material_id & mat ) {
-                    return lcmatch( mat->name(), filter );
+                [&filter]( const std::pair<material_id, int> &mat ) {
+                    return lcmatch( mat.first->name(), filter );
                 } );
             };
         // qualities
         case 'q':
             return [filter]( const item & i ) {
-                return std::any_of( i.quality_of().begin(), i.quality_of().end(),
-                [&filter]( const std::pair<quality_id, int> &e ) {
-                    return lcmatch( e.first->name, filter );
-                } );
+                return i.type->has_any_quality( filter );
             };
         // both
         case 'b':
@@ -68,10 +67,18 @@ std::function<bool( const item & )> basic_item_filter( std::string filter )
                 const std::string note = i.get_var( "item_note" );
                 return !note.empty() && lcmatch( note, filter );
             };
+        // by book skill
+        case 's':
+            return [filter]( const item & i ) {
+                if( get_avatar().has_identified( i.typeId() ) ) {
+                    return lcmatch( i.get_book_skill(), filter );
+                }
+                return false;
+            };
         // by name
         default:
             return [filter]( const item & a ) {
-                return lcmatch( a.tname(), filter );
+                return lcmatch( remove_color_tags( a.tname() ), filter );
             };
     }
 }
@@ -81,9 +88,9 @@ std::function<bool( const item & )> item_filter_from_string( const std::string &
     return filter_from_string<item>( filter, basic_item_filter );
 }
 
-std::pair<std::string, std::string> get_both( const std::string &a )
+std::pair<std::string, std::string> get_both( const std::string_view a )
 {
     size_t split_mark = a.find( ';' );
-    return std::make_pair( a.substr( 0, split_mark - 1 ),
-                           a.substr( split_mark + 1 ) );
+    return std::pair( std::string( a.substr( 0, split_mark ) ),
+                      std::string( a.substr( split_mark + 1 ) ) );
 }

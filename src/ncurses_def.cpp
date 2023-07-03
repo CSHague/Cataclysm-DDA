@@ -9,6 +9,9 @@
 // ncurses can define some functions as macros, but we need those identifiers
 // to be unchanged by the preprocessor, as we use them as function names.
 #define NCURSES_NOMACROS
+#if !defined(__APPLE__)
+#define NCURSES_WIDECHAR 1
+#endif
 #if defined(__CYGWIN__)
 #include <ncurses/curses.h>
 #else
@@ -23,9 +26,11 @@
 #include <stdexcept>
 
 #include "cached_options.h"
+#include "cata_utility.h"
 #include "catacharset.h"
 #include "color.h"
 #include "cursesdef.h"
+#include "game_constants.h"
 #include "game_ui.h"
 #include "output.h"
 #include "ui_manager.h"
@@ -48,72 +53,114 @@ catacurses::window catacurses::newwin( const int nlines, const int ncols, const 
 
 void catacurses::wnoutrefresh( const window &win )
 {
+    if( !win ) {
+        return;
+    }
     return curses_check_result( ::wnoutrefresh( win.get<::WINDOW>() ), OK, "wnoutrefresh" );
 }
 
 void catacurses::wrefresh( const window &win )
 {
+    if( !win ) {
+        return;
+    }
     return curses_check_result( ::wrefresh( win.get<::WINDOW>() ), OK, "wrefresh" );
 }
 
 void catacurses::werase( const window &win )
 {
+    if( !win ) {
+        return;
+    }
     return curses_check_result( ::werase( win.get<::WINDOW>() ), OK, "werase" );
 }
 
 int catacurses::getmaxx( const window &win )
 {
+    if( !win ) {
+        return 0;
+    }
     return ::getmaxx( win.get<::WINDOW>() );
 }
 
 int catacurses::getmaxy( const window &win )
 {
+    if( !win ) {
+        return 0;
+    }
     return ::getmaxy( win.get<::WINDOW>() );
 }
 
 int catacurses::getbegx( const window &win )
 {
+    if( !win ) {
+        return 0;
+    }
     return ::getbegx( win.get<::WINDOW>() );
 }
 
 int catacurses::getbegy( const window &win )
 {
+    if( !win ) {
+        return 0;
+    }
     return ::getbegy( win.get<::WINDOW>() );
 }
 
 int catacurses::getcurx( const window &win )
 {
+    if( !win ) {
+        return 0;
+    }
     return ::getcurx( win.get<::WINDOW>() );
 }
 
 int catacurses::getcury( const window &win )
 {
+    if( !win ) {
+        return 0;
+    }
     return ::getcury( win.get<::WINDOW>() );
 }
 
 void catacurses::wattroff( const window &win, const nc_color attrs )
 {
+    if( !win ) {
+        return;
+    }
     return curses_check_result( ::wattroff( win.get<::WINDOW>(), attrs.to_int() ), OK, "wattroff" );
 }
 
 void catacurses::wattron( const window &win, const nc_color &attrs )
 {
+    if( !win ) {
+        return;
+    }
     return curses_check_result( ::wattron( win.get<::WINDOW>(), attrs.to_int() ), OK, "wattron" );
 }
 
 void catacurses::wmove( const window &win, const point &p )
 {
+    if( !win ) {
+        return;
+    }
     return curses_check_result( ::wmove( win.get<::WINDOW>(), p.y, p.x ), OK, "wmove" );
 }
 
 void catacurses::mvwprintw( const window &win, const point &p, const std::string &text )
 {
+    if( !win ) {
+        return;
+    }
     return curses_check_result( ::mvwprintw( win.get<::WINDOW>(), p.y, p.x, "%s", text.c_str() ),
                                 OK, "mvwprintw" );
 }
 
 void catacurses::wprintw( const window &win, const std::string &text )
 {
+    if( !win ) {
+        return;
+    }
     return curses_check_result( ::wprintw( win.get<::WINDOW>(), "%s", text.c_str() ),
                                 OK, "wprintw" );
 }
@@ -151,40 +198,61 @@ void catacurses::endwin()
 void catacurses::wborder( const window &win, const chtype ls, const chtype rs, const chtype ts,
                           const chtype bs, const chtype tl, const chtype tr, const chtype bl, const chtype br )
 {
+    if( !win ) {
+        return;
+    }
     return curses_check_result( ::wborder( win.get<::WINDOW>(), ls, rs, ts, bs, tl, tr, bl, br ), OK,
                                 "wborder" );
 }
 
 void catacurses::mvwhline( const window &win, const point &p, const chtype ch, const int n )
 {
+    if( !win ) {
+        return;
+    }
     return curses_check_result( ::mvwhline( win.get<::WINDOW>(), p.y, p.x, ch, n ), OK,
                                 "mvwhline" );
 }
 
 void catacurses::mvwvline( const window &win, const point &p, const chtype ch, const int n )
 {
+    if( !win ) {
+        return;
+    }
     return curses_check_result( ::mvwvline( win.get<::WINDOW>(), p.y, p.x, ch, n ), OK,
                                 "mvwvline" );
 }
 
 void catacurses::mvwaddch( const window &win, const point &p, const chtype ch )
 {
+    if( !win ) {
+        return;
+    }
     return curses_check_result( ::mvwaddch( win.get<::WINDOW>(), p.y, p.x, ch ), OK, "mvwaddch" );
 }
 
 void catacurses::waddch( const window &win, const chtype ch )
 {
+    if( !win ) {
+        return;
+    }
     return curses_check_result( ::waddch( win.get<::WINDOW>(), ch ), OK, "waddch" );
 }
 
 void catacurses::wredrawln( const window &win, const int beg_line, const int num_lines )
 {
+    if( !win ) {
+        return;
+    }
     return curses_check_result( ::wredrawln( win.get<::WINDOW>(), beg_line, num_lines ), OK,
                                 "wredrawln" );
 }
 
 void catacurses::wclear( const window &win )
 {
+    if( !win ) {
+        return;
+    }
     return curses_check_result( ::wclear( win.get<::WINDOW>() ), OK, "wclear" );
 }
 
@@ -218,6 +286,7 @@ void catacurses::init_pair( const short pair, const base_color f, const base_col
                                 OK, "init_pair" );
 }
 
+catacurses::window catacurses::newscr;
 catacurses::window catacurses::stdscr;
 
 void catacurses::resizeterm()
@@ -227,6 +296,7 @@ void catacurses::resizeterm()
     if( ::is_term_resized( new_x, new_y ) ) {
         game_ui::init_ui();
         ui_manager::screen_resized();
+        catacurses::doupdate();
     }
 }
 
@@ -239,12 +309,16 @@ void catacurses::init_interface()
     if( !stdscr ) {
         throw std::runtime_error( "initscr failed" );
     }
+    newscr = window( std::shared_ptr<void>( ::newscr, []( void *const ) { } ) );
+    if( !newscr ) {
+        throw std::runtime_error( "null newscr" );
+    }
 #if !defined(__CYGWIN__)
     // ncurses mouse registration
-    mousemask( BUTTON1_CLICKED | BUTTON3_CLICKED | REPORT_MOUSE_POSITION, nullptr );
+    mousemask( ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, nullptr );
 #endif
     // our curses wrapper does not support changing this behavior, ncurses must
-    // behave exactly like the wrapper, therefor:
+    // behave exactly like the wrapper, therefore:
     noecho();  // Don't echo keypresses
     cbreak();  // C-style breaks (e.g. ^C to SIGINT)
     keypad( stdscr.get<::WINDOW>(), true ); // Numpad is numbers
@@ -252,6 +326,36 @@ void catacurses::init_interface()
     // TODO: error checking
     start_color();
     init_colors();
+}
+
+bool catacurses::supports_256_colors()
+{
+    return COLORS >= 256;
+}
+
+void input_manager::pump_events()
+{
+    if( test_mode ) {
+        return;
+    }
+
+    // Handle all events, but ignore any keypress
+    int key = ERR;
+    bool resize = false;
+    const int prev_timeout = input_timeout;
+    set_timeout( 0 );
+    do {
+        key = getch();
+        if( key == KEY_RESIZE ) {
+            resize = true;
+        }
+    } while( key != ERR );
+    set_timeout( prev_timeout );
+    if( resize ) {
+        catacurses::resizeterm();
+    }
+
+    previously_pressed_key = 0;
 }
 
 // there isn't a portable way to get raw key code on curses,
@@ -300,17 +404,24 @@ input_event input_manager::get_input_event( const keyboard_mode /*preferred_keyb
                 rval.type = input_event_t::mouse;
                 rval.mouse_pos = point( event.x, event.y );
                 if( event.bstate & BUTTON1_CLICKED ) {
-                    rval.add_input( MOUSE_BUTTON_LEFT );
+                    rval.add_input( MouseInput::LeftButtonReleased );
+                } else if( event.bstate & BUTTON1_PRESSED ) {
+                    rval.add_input( MouseInput::LeftButtonPressed );
                 } else if( event.bstate & BUTTON3_CLICKED ) {
-                    rval.add_input( MOUSE_BUTTON_RIGHT );
-                } else if( event.bstate & REPORT_MOUSE_POSITION ) {
-                    rval.add_input( MOUSE_MOVE );
+                    rval.add_input( MouseInput::RightButtonReleased );
+                    // If curses version is prepared for a 5-button mouse, enable mousewheel
+#if defined(BUTTON5_PRESSED)
+                } else if( event.bstate & BUTTON4_PRESSED ) {
+                    rval.add_input( MouseInput::ScrollWheelUp );
+                } else if( event.bstate & BUTTON5_PRESSED ) {
+                    rval.add_input( MouseInput::ScrollWheelDown );
+#endif
+                } else {
+                    rval.add_input( MouseInput::Move );
                     if( input_timeout > 0 ) {
                         // Mouse movement seems to clear ncurses timeout
                         set_timeout( input_timeout );
                     }
-                } else {
-                    rval.type = input_event_t::error;
                 }
             } else {
                 rval.type = input_event_t::error;
@@ -396,45 +507,44 @@ bool nc_color::is_blink() const
     return attribute_value & A_BLINK;
 }
 
-void ensure_term_size();
-void check_encoding();
+void ensure_term_size(); // NOLINT(cata-static-declarations)
+void check_encoding(); // NOLINT(cata-static-declarations)
 
 void ensure_term_size()
 {
     // do not use ui_adaptor here to avoid re-entry
-    const int minHeight = FULL_SCREEN_HEIGHT;
-    const int minWidth = FULL_SCREEN_WIDTH;
-    int maxy = getmaxy( catacurses::stdscr );
-    int maxx = getmaxx( catacurses::stdscr );
+    const int minHeight = EVEN_MINIMUM_TERM_HEIGHT;
+    const int minWidth = EVEN_MINIMUM_TERM_WIDTH;
 
-    while( maxy < minHeight || maxx < minWidth ) {
+    while( TERMY < minHeight || TERMX < minWidth ) {
         catacurses::erase();
-        if( maxy < minHeight && maxx < minWidth ) {
-            fold_and_print( catacurses::stdscr, point_zero, maxx, c_white,
+        if( TERMY < minHeight && TERMX < minWidth ) {
+            fold_and_print( catacurses::stdscr, point_zero, TERMX, c_white,
                             _( "Whoa!  Your terminal is tiny!  This game requires a minimum terminal size of "
                                "%dx%d to work properly.  %dx%d just won't do.  Maybe a smaller font would help?" ),
-                            minWidth, minHeight, maxx, maxy );
-        } else if( maxx < minWidth ) {
-            fold_and_print( catacurses::stdscr, point_zero, maxx, c_white,
+                            minWidth, minHeight, TERMX, TERMY );
+        } else if( TERMX < minWidth ) {
+            fold_and_print( catacurses::stdscr, point_zero, TERMX, c_white,
                             _( "Oh!  Hey, look at that.  Your terminal is just a little too narrow.  This game "
                                "requires a minimum terminal size of %dx%d to function.  It just won't work "
                                "with only %dx%d.  Can you stretch it out sideways a bit?" ),
-                            minWidth, minHeight, maxx, maxy );
+                            minWidth, minHeight, TERMX, TERMY );
         } else {
-            fold_and_print( catacurses::stdscr, point_zero, maxx, c_white,
+            fold_and_print( catacurses::stdscr, point_zero, TERMX, c_white,
                             _( "Woah, woah, we're just a little short on space here.  The game requires a "
                                "minimum terminal size of %dx%d to run.  %dx%d isn't quite enough!  Can you "
                                "make the terminal just a smidgen taller?" ),
-                            minWidth, minHeight, maxx, maxy );
+                            minWidth, minHeight, TERMX, TERMY );
         }
         catacurses::refresh();
         // do not use input_manager or input_context here to avoid re-entry
         getch();
-        maxy = getmaxy( catacurses::stdscr );
-        maxx = getmaxx( catacurses::stdscr );
+        TERMY = getmaxy( catacurses::stdscr );
+        TERMX = getmaxx( catacurses::stdscr );
     }
 }
 
+// NOLINTNEXTLINE(cata-static-declarations)
 void check_encoding()
 {
     // Check whether LC_CTYPE supports the UTF-8 encoding
@@ -454,6 +564,11 @@ void check_encoding()
             key = getch();
         } while( key == KEY_RESIZE || key == KEY_MOUSE );
     }
+}
+
+void set_title( const std::string & )
+{
+    // curses does not seem to have a portable way of setting the window title.
 }
 
 #endif

@@ -16,7 +16,7 @@
     "color": "light_cyan",
     "aggression": 100,
     "morale": 100,
-    "armor_bash": 15,
+    "bleed_rate": 30,
     "vision_day": 30,
     "vision_night": 12,
     "luminance": 200,
@@ -36,8 +36,9 @@
     ],
     "special_when_hit": [ "ZAPBACK", 100 ],
     "harvest": "flesh_plant_bloom",
-    "death_function": [ "NORMAL" ],
-    "flags": [ "SEES", "NOHEAD", "IMMOBILE", "NO_BREATHE", "QUEEN", "HARDTOSHOOT" ]
+    "dissect": "dissect_plant_sample_large",
+    "flags": [ "SEES", "NOHEAD", "IMMOBILE", "NO_BREATHE", "QUEEN", "HARDTOSHOOT" ],
+    "armor": { "bash": 15, "electric": 1 }
   },
   {
     "id": "mon_leech_stalk",
@@ -56,7 +57,7 @@
     "color": "light_blue",
     "aggression": 100,
     "morale": 100,
-    "armor_bash": 15,
+    "bleed_rate": 30,
     "vision_day": 30,
     "vision_night": 8,
     "luminance": 200,
@@ -74,8 +75,9 @@
     ],
     "special_when_hit": [ "ZAPBACK", 100 ],
     "harvest": "flesh_plant",
-    "death_function": [ "NORMAL" ],
-    "flags": [ "SEES", "NOHEAD", "IMMOBILE", "NO_BREATHE", "HARDTOSHOOT" ]
+    "dissect": "dissect_plant_sample_single",
+    "flags": [ "SEES", "NOHEAD", "IMMOBILE", "NO_BREATHE", "HARDTOSHOOT" ],
+    "armor": { "bash": 15, "electric": 1 }
   },
   {
     "id": "mon_leech_radio",
@@ -94,15 +96,15 @@
     "color": "light_blue",
     "aggression": 100,
     "morale": 100,
-    "armor_bash": 15,
+    "bleed_rate": 30,
     "vision_day": 30,
     "vision_night": 8,
     "luminance": 200,
     "special_when_hit": [ "ZAPBACK", 100 ],
     "harvest": "flesh_plant",
-    "death_drops": {  },
-    "death_function": [ "NORMAL" ],
-    "flags": [ "SEES", "NOHEAD", "IMMOBILE", "NO_BREATHE", "HARDTOSHOOT" ]
+    "dissect": "dissect_plant_sample_single",
+    "flags": [ "SEES", "NOHEAD", "IMMOBILE", "NO_BREATHE", "HARDTOSHOOT" ],
+    "armor": { "bash": 15, "electric": 1 }
   },
   {
     "id": "mon_leech_pod_cluster",
@@ -121,7 +123,6 @@
     "color": "white",
     "aggression": 100,
     "morale": 100,
-    "armor_bash": 15,
     "luminance": 60,
     "special_attacks": [
       {
@@ -135,14 +136,15 @@
       [ "LEECH_SPAWNER", 120 ]
     ],
     "harvest": "flesh_plant",
-    "death_function": [ "NORMAL" ],
-    "flags": [ "SEES", "NOHEAD", "IMMOBILE", "NO_BREATHE" ]
+    "dissect": "dissect_plant_sample_single",
+    "flags": [ "SEES", "NOHEAD", "IMMOBILE", "NO_BREATHE" ],
+    "armor": { "bash": 15 }
   },
   {
     "id": "mon_leech_root_runner",
     "type": "MONSTER",
     "name": { "str": "root runner" },
-    "description": "This clump of woody vegetation hastily clambers around in a lizard-like fashion.  Three translucent scale-leaves stand tall on the backside of the creature, and the thin ridges within them periodically glow through some unknown mean.  It's seemingly a symbiote of the nearby alien ferns, and looks ready to defend them with its life.",
+    "description": "This clump of woody vegetation hastily clambers around in a lizard-like fashion.  Three translucent scale-leaves stand tall on the backside of the creature, and the thin ridges within them periodically glow through some unknown means.  It's seemingly a symbiote of the nearby alien ferns, and looks ready to defend them with its life.",
     "default_faction": "leech_plant",
     "species": [ "LEECH_PLANT" ],
     "volume": "4000 ml",
@@ -158,7 +160,6 @@
     "melee_skill": 4,
     "melee_dice": 1,
     "melee_dice_sides": 2,
-    "armor_bash": 15,
     "luminance": 60,
     "vision_day": 30,
     "vision_night": 5,
@@ -178,14 +179,15 @@
     ],
     "special_when_hit": [ "ZAPBACK", 100 ],
     "harvest": "flesh_plant",
-    "death_function": [ "NORMAL" ],
-    "flags": [ "SEES", "NOHEAD", "NO_BREATHE", "HARDTOSHOOT" ]
+    "dissect": "dissect_plant_sample_single",
+    "flags": [ "SEES", "NOHEAD", "NO_BREATHE", "HARDTOSHOOT" ],
+    "armor": { "bash": 15, "electric": 2 }
   },
   {
     "id": "mon_leech_root_drone",
     "type": "MONSTER",
     "name": { "str": "root drone" },
-    "description": "A small bulb with a beak-like protuberance, skittishly roaming about under three tendril rhizomes.  Dripping and glistening, it resembles a creature newly born rather than a sapling grown from seeds.",
+    "description": "A small bulb with a beak-like protuberance, skittishly roaming about under three tendril rhizomes.  Dripping and glistening, it resembles a newborn animal rather than a sapling grown from seeds.",
     "default_faction": "leech_plant",
     "species": [ "LEECH_PLANT" ],
     "volume": "3000 ml",
@@ -200,7 +202,6 @@
     "melee_skill": 2,
     "melee_dice": 1,
     "melee_dice_sides": 2,
-    "armor_bash": 15,
     "luminance": 60,
     "vision_day": 30,
     "vision_night": 5,
@@ -219,7 +220,8 @@
       [ "EVOLVE_KILL_STRIKE", 6 ]
     ],
     "harvest": "flesh_plant",
-    "death_function": [ "NORMAL" ],
-    "flags": [ "SEES", "NOHEAD", "NO_BREATHE", "HARDTOSHOOT" ]
+    "dissect": "dissect_plant_sample_single",
+    "flags": [ "SEES", "NOHEAD", "NO_BREATHE", "HARDTOSHOOT" ],
+    "armor": { "bash": 15, "electric": 2 }
   }
 ]

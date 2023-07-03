@@ -2,7 +2,7 @@
   {
     "type": "npc",
     "id": "isherwood_eddie",
-    "//": "Dairy farmer the Isherwood family.",
+    "//": "Dairy farmer of the Isherwood family.",
     "name_unique": "Eddie Isherwood",
     "gender": "male",
     "class": "NC_ISHERWOOD_EDDIE",
@@ -17,12 +17,16 @@
     "id": "NC_ISHERWOOD_EDDIE",
     "name": { "str": "Eddie Isherwood" },
     "job_description": "I'm a dairy farmer, part of the Isherwood family",
-    "traits": [ { "group": "NPC_starting_traits" }, { "group": "Appearance_demographics" } ],
+    "traits": [
+      { "group": "NPC_starting_traits" },
+      { "group": "Appearance_demographics" },
+      { "trait": "NO_BASH" },
+      { "trait": "RETURN_TO_START_POS" }
+    ],
     "common": false,
     "bonus_per": { "one_in": 4 },
-    "worn_override": "NC_Isherwood_worn",
-    "carry_override": "NC_ISHERWOOD_rifle",
-    "weapon_override": "NC_ISHERWOOD_archery",
+    "worn_override": "NC_Isherwood_male_worn",
+    "weapon_override": "NC_ISHERWOOD_rifle",
     "shopkeeper_item_group": "NC_ISHERWOOD_EDDIE_misc",
     "skills": [
       {
@@ -211,8 +215,8 @@
     "end": {
       "opinion": { "trust": 1, "value": 1 },
       "effect": [
-        { "u_buy_item": "meat_smoked", "count": 12 },
-        { "u_buy_item": "milk", "container": "jar_3l_glass_sealed", "count": 12 }
+        { "u_spawn_item": "meat_smoked", "count": 12 },
+        { "u_spawn_item": "milk", "container": "jar_3l_glass_sealed", "count": 12 }
       ],
       "update_mapgen": [
         {
@@ -239,7 +243,10 @@
     "followup": "MISSION_ISHERWOOD_EDDIE_3",
     "end": {
       "opinion": { "trust": 1, "value": 1 },
-      "effect": [ { "u_buy_item": "butter", "count": 6 }, { "u_buy_item": "milk", "container": "jar_3l_glass_sealed", "count": 12 } ]
+      "effect": [
+        { "u_spawn_item": "butter", "count": 6 },
+        { "u_spawn_item": "milk", "container": "jar_3l_glass_sealed", "count": 12 }
+      ]
     },
     "origins": [ "ORIGIN_SECONDARY" ],
     "has_generic_rewards": false,
@@ -258,26 +265,26 @@
   {
     "id": "MISSION_ISHERWOOD_EDDIE_3",
     "type": "mission_definition",
-    "name": { "str": "Gather 1000 units of clay" },
+    "name": { "str": "Gather 100 units of clay" },
     "goal": "MGOAL_FIND_ITEM",
     "difficulty": 3,
     "value": 20000,
     "item": "clay_lump",
-    "count": 1000,
+    "count": 100,
     "end": {
       "opinion": { "trust": 2, "value": 2 },
       "effect": [
         { "u_add_var": "u_did_eddie_missions", "type": "general", "context": "mission", "value": "yes" },
-        { "u_buy_item": "rope_6", "count": 1 },
+        { "u_spawn_item": "rope_6", "count": 1 },
         { "u_buy_monster": "mon_cow", "count": 1, "name": "Daisy" },
-        { "u_buy_item": "cattlefodder", "count": 3 }
+        { "u_spawn_item": "cattlefodder", "count": 3 }
       ]
     },
     "origins": [ "ORIGIN_SECONDARY" ],
     "has_generic_rewards": false,
     "dialogue": {
       "describe": "I do have some resource gathering I could use help if you have time.",
-      "offer": "Now that the clay kiln is set up, we could use 1000 units of clay to get production going.",
+      "offer": "Now that the clay kiln is set up, we could use 100 units of clay to get production going.",
       "accepted": "Thank you.",
       "rejected": "Oh well.  I'll try to find time to get it myself, thanks.",
       "advice": "You can find it along river banks, or maybe look for deposits in the forest.",

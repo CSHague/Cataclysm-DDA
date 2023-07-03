@@ -34,7 +34,7 @@ void ascii_art::load_ascii_art( const JsonObject &jo, const std::string &src )
     ascii_art_factory.load( jo, src );
 }
 
-void ascii_art::load( const JsonObject &jo, const std::string & )
+void ascii_art::load( const JsonObject &jo, const std::string_view )
 {
     assign( jo, "id", id );
 
@@ -46,5 +46,10 @@ void ascii_art::load( const JsonObject &jo, const std::string & )
                       ascii_art_width );
         }
     }
+}
+
+void ascii_art::reset()
+{
+    ascii_art_factory.reset();
 }
 

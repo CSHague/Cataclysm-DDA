@@ -6,9 +6,7 @@
 
 #include "cata_utility.h"
 #include "character.h"
-#include "game.h"
 #include "json.h"
-#include "player.h"
 #include "stomach.h"
 #include "units.h"
 #include "vitamin.h"
@@ -135,20 +133,15 @@ void stomach_contents::serialize( JsonOut &json ) const
     json.end_object();
 }
 
-static units::volume string_to_ml( const std::string &str )
+static units::volume string_to_ml( const std::string_view str )
 {
-    return units::from_milliliter( std::stoi( str.substr( 0, str.size() - 3 ) ) );
+    return units::from_milliliter( svto<int>( str.substr( 0, str.size() - 3 ) ) );
 }
 
-void stomach_contents::deserialize( JsonIn &json )
+void stomach_contents::deserialize( const JsonObject &jo )
 {
-    JsonObject jo = json.get_object();
     jo.read( "vitamins", nutr.vitamins );
     jo.read( "calories", nutr.calories );
-    // nutr.calories was changed from being in kcal to being in cal
-    if( savegame_loading_version <= 31 ) {
-        nutr.calories *= 1000;
-    }
     std::string str;
     jo.read( "water", str );
     water = string_to_ml( str );
@@ -157,6 +150,20 @@ void stomach_contents::deserialize( JsonIn &json )
     jo.read( "contents", str );
     contents = string_to_ml( str );
     jo.read( "last_ate", last_ate );
+
+    // the next chunk deletes obsoleted vitamins
+    const auto predicate = []( const std::pair<vitamin_id, int> &pair ) {
+        if( !pair.first.is_valid() ) {
+            DebugLog( D_WARNING, DC_ALL )
+                    << "deleted '" << pair.first.str() << "' from stomach_contents::nutrients::vitamins";
+            return true;
+        }
+        return false;
+    };
+    std::map<vitamin_id, int>::iterator it = nutr.vitamins.begin();
+    while( ( it = std::find_if( it, nutr.vitamins.end(), predicate ) ) != nutr.vitamins.end() ) {
+        nutr.vitamins.erase( it++ );
+    }
 }
 
 units::volume stomach_contents::capacity( const Character &owner ) const
@@ -226,7 +233,7 @@ void stomach_contents::empty()
 }
 
 stomach_digest_rates stomach_contents::get_digest_rates( const needs_rates &metabolic_rates,
-        const Character &owner )
+        const Character &owner ) const
 {
     stomach_digest_rates rates;
     if( stomach ) {

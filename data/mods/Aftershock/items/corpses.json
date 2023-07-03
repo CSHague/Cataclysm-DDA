@@ -1,10 +1,21 @@
 [
   {
     "type": "GENERIC",
+    "id": "afs_corpse_old",
+    "copy-from": "corpse",
+    "name": { "str": "mummified corpse" },
+    "description": "The corpse of a long-dead colonist.  Near perfectly preserved by the merciless cold.",
+    "looks_like": "corpse_generic_human",
+    "volume": "40 L",
+    "weight": "52 kg",
+    "material": [ "hflesh" ]
+  },
+  {
+    "type": "GENERIC",
     "id": "broken_afs_mon_sentinel_lx",
     "symbol": ",",
     "color": "green",
-    "name": { "str": "broken sentinel-lx", "str_pl": "broken sentinels-lx" },
+    "name": { "str": "broken Sentinel-lx", "str_pl": "broken Sentinels-lx" },
     "category": "other",
     "description": "The irreparably broken remains of a Sentinel-lx.  Could be gutted for valuable parts.",
     "price": 30000,
@@ -12,10 +23,9 @@
     "material": [ "steel", "plastic" ],
     "weight": "140000 g",
     "volume": "62500 ml",
-    "bashing": 6,
-    "cutting": 6,
     "to_hit": -3,
-    "flags": [ "TRADER_AVOID" ]
+    "flags": [ "TRADER_AVOID" ],
+    "melee_damage": { "bash": 6, "cut": 6 }
   },
   {
     "type": "GENERIC",
@@ -29,10 +39,9 @@
     "material": [ "steel", "plastic" ],
     "weight": "31520 g",
     "volume": "15 L",
-    "bashing": 6,
-    "cutting": 6,
     "to_hit": -3,
-    "flags": [ "TRADER_AVOID", "NO_REPAIR" ]
+    "flags": [ "TRADER_AVOID", "NO_REPAIR" ],
+    "melee_damage": { "bash": 6, "cut": 6 }
   },
   {
     "type": "GENERIC",
@@ -46,10 +55,9 @@
     "material": [ "steel", "plastic" ],
     "weight": "140 kg",
     "volume": "62500 ml",
-    "bashing": 6,
-    "cutting": 6,
     "to_hit": -3,
-    "flags": [ "TRADER_AVOID", "LEAK_DAM", "RADIOACTIVE" ]
+    "flags": [ "TRADER_AVOID", "LEAK_DAM", "RADIOACTIVE" ],
+    "melee_damage": { "bash": 6, "cut": 6 }
   },
   {
     "type": "GENERIC",
@@ -175,7 +183,7 @@
     "symbol": ",",
     "color": "white",
     "looks_like": "broken_copbot",
-    "name": "broken disarmed advanced bot",
+    "name": "broken disarmed advanced robot",
     "category": "other",
     "description": "A broken advanced robot.  Its internal weapons have been removed.  Could be gutted for parts or crafted into a salvaged robot.",
     "price": 30000,
@@ -183,10 +191,9 @@
     "material": [ "superalloy", "plastic" ],
     "weight": "140 kg",
     "volume": "62500 ml",
-    "bashing": 6,
-    "cutting": 6,
     "to_hit": -3,
-    "flags": [ "TRADER_AVOID", "LEAK_DAM", "RADIOACTIVE" ]
+    "flags": [ "TRADER_AVOID", "LEAK_DAM", "RADIOACTIVE" ],
+    "melee_damage": { "bash": 6, "cut": 6 }
   },
   {
     "type": "GENERIC",
@@ -201,8 +208,24 @@
     "id": "broken_wraitheon_irradiant",
     "copy-from": "broken_advbot_disarmed",
     "color": "magenta",
-    "name": "broken Wraitheon Irradiant",
+    "name": "broken Irradiant",
     "description": "The irreparably broken remains of an Irradiant weapons platform.  Its mounted plasma cannon self-destructed when the robot was rendered inoperable, but its remains could still be disassembled for some valuable parts."
+  },
+  {
+    "type": "GENERIC",
+    "id": "broken_wraitheon_isohypsa",
+    "copy-from": "broken_advbot_disarmed",
+    "color": "magenta",
+    "name": { "str_sp": "broken Isohypsa" },
+    "description": "The broken shell of an Isohypsa drone coordinator.  Most of its sensors and AI units are charred beyond any repair."
+  },
+  {
+    "type": "GENERIC",
+    "id": "broken_wraitheon_kaburaya",
+    "copy-from": "broken_advbot_disarmed",
+    "color": "magenta",
+    "name": { "str_sp": "broken Kabura-ya" },
+    "description": "A broken Kabura-ya drone.  Could be disassembled for a meager amount of parts."
   },
   {
     "type": "GENERIC",
@@ -226,10 +249,9 @@
     "material": [ "steel", "plastic" ],
     "weight": "140 kg",
     "volume": "62500 ml",
-    "bashing": 6,
-    "cutting": 6,
     "to_hit": -3,
-    "flags": [ "TRADER_AVOID", "LEAK_DAM", "RADIOACTIVE" ]
+    "flags": [ "TRADER_AVOID", "LEAK_DAM", "RADIOACTIVE" ],
+    "melee_damage": { "bash": 6, "cut": 6 }
   },
   {
     "type": "GENERIC",
@@ -245,10 +267,9 @@
     "material": [ "steel", "plastic" ],
     "weight": "140 kg",
     "volume": "62500 ml",
-    "bashing": 6,
-    "cutting": 6,
     "to_hit": -3,
-    "flags": [ "TRADER_AVOID", "LEAK_DAM", "RADIOACTIVE" ]
+    "flags": [ "TRADER_AVOID", "LEAK_DAM", "RADIOACTIVE" ],
+    "melee_damage": { "bash": 6, "cut": 6 }
   },
   {
     "type": "GENERIC",
@@ -264,9 +285,8 @@
     "material": [ "steel", "plastic" ],
     "weight": "140 kg",
     "volume": "62500 ml",
-    "bashing": 6,
-    "cutting": 6,
     "to_hit": -3,
-    "flags": [ "TRADER_AVOID", "LEAK_DAM", "RADIOACTIVE" ]
+    "flags": [ "TRADER_AVOID", "LEAK_DAM", "RADIOACTIVE" ],
+    "melee_damage": { "bash": 6, "cut": 6 }
   }
 ]

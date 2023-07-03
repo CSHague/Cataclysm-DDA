@@ -1,4 +1,4 @@
-#include "catch/catch.hpp"
+#include "cata_catch.h"
 #include "item.h"
 
 #include <cmath>
@@ -7,18 +7,41 @@
 #include <memory>
 #include <vector>
 
+#include "avatar.h"
+#include "avatar_action.h"
 #include "calendar.h"
 #include "enums.h"
+#include "flag.h"
+#include "game.h"
+#include "item_category.h"
 #include "item_factory.h"
 #include "item_pocket.h"
 #include "itype.h"
 #include "math_defines.h"
 #include "monstergenerator.h"
 #include "mtype.h"
+#include "player_helpers.h"
 #include "ret_val.h"
+#include "test_data.h"
 #include "type_id.h"
 #include "units.h"
 #include "value_ptr.h"
+
+static const flag_id json_flag_COLD( "COLD" );
+static const flag_id json_flag_FILTHY( "FILTHY" );
+static const flag_id json_flag_FIX_NEARSIGHT( "FIX_NEARSIGHT" );
+static const flag_id json_flag_HOT( "HOT" );
+
+static const item_category_id item_category_container( "container" );
+static const item_category_id item_category_food( "food" );
+
+static const itype_id itype_test_backpack( "test_backpack" );
+static const itype_id itype_test_duffelbag( "test_duffelbag" );
+static const itype_id itype_test_mp3( "test_mp3" );
+static const itype_id itype_test_smart_phone( "test_smart_phone" );
+static const itype_id itype_test_waterproof_bag( "test_waterproof_bag" );
+
+static const json_character_flag json_flag_DEAF( "DEAF" );
 
 TEST_CASE( "item_volume", "[item]" )
 {
@@ -42,11 +65,11 @@ TEST_CASE( "item_volume", "[item]" )
 
 TEST_CASE( "simple_item_layers", "[item]" )
 {
-    CHECK( item( "arm_warmers" ).get_layer() == layer_level::UNDERWEAR );
-    CHECK( item( "10gal_hat" ).get_layer() == layer_level::REGULAR );
-    CHECK( item( "baldric" ).get_layer() == layer_level::WAIST );
-    CHECK( item( "aep_suit" ).get_layer() == layer_level::OUTER );
-    CHECK( item( "2byarm_guard" ).get_layer() == layer_level::BELTED );
+    CHECK( item( "arm_warmers" ).get_layer().front() == layer_level::SKINTIGHT );
+    CHECK( item( "10gal_hat" ).get_layer().front() == layer_level::NORMAL );
+    // intentionally no waist layer check since it is obsoleted
+    CHECK( item( "armor_lightplate" ).get_layer().front() == layer_level::OUTER );
+    CHECK( item( "legrig" ).get_layer().front() == layer_level::BELTED );
 }
 
 TEST_CASE( "gun_layer", "[item]" )
@@ -55,17 +78,19 @@ TEST_CASE( "gun_layer", "[item]" )
     item mod( "shoulder_strap" );
     CHECK( gun.is_gunmod_compatible( mod ).success() );
     gun.put_in( mod, item_pocket::pocket_type::MOD );
-    CHECK( gun.get_layer() == layer_level::BELTED );
+    CHECK( gun.get_layer().front() == layer_level::BELTED );
 }
 
 TEST_CASE( "stacking_cash_cards", "[item]" )
 {
     // Differently-charged cash cards should stack if neither is zero.
-    item cash0( "cash_card", calendar::turn_zero, 0 );
-    item cash1( "cash_card", calendar::turn_zero, 1 );
-    item cash2( "cash_card", calendar::turn_zero, 2 );
+    item cash0( "cash_card", calendar::turn_zero );
+    item cash1( "cash_card", calendar::turn_zero );
+    item cash2( "cash_card", calendar::turn_zero );
+    cash1.put_in( item( "money", calendar::turn_zero, 1 ), item_pocket::pocket_type::MAGAZINE );
+    cash2.put_in( item( "money", calendar::turn_zero, 2 ), item_pocket::pocket_type::MAGAZINE );
     CHECK( !cash0.stacks_with( cash1 ) );
-    CHECK( cash1.stacks_with( cash2 ) );
+    //CHECK( cash1.stacks_with( cash2 ) ); Enable this once cash card stacking is brought back.
 }
 
 // second minute hour day week season year
@@ -167,7 +192,7 @@ TEST_CASE( "stacking_over_time", "[item]" )
     }
 }
 
-TEST_CASE( "liquids at different temperatures", "[item][temperature][stack][combine]" )
+TEST_CASE( "liquids_at_different_temperatures", "[item][temperature][stack][combine]" )
 {
     item liquid_hot( "test_liquid" );
     item liquid_cold( "test_liquid" );
@@ -177,13 +202,12 @@ TEST_CASE( "liquids at different temperatures", "[item][temperature][stack][comb
     liquid_hot.heat_up(); // 60 C (333.15 K)
     liquid_cold.cold_up(); // 3 C (276.15 K)
     liquid_filthy.cold_up(); // 3 C (276.15 K)
-    liquid_filthy.set_flag( flag_id( "FILTHY" ) );
+    liquid_filthy.set_flag( json_flag_FILTHY );
 
-    // Temperature is in terms of 0.000001 K
-    REQUIRE( std::floor( liquid_hot.temperature / 100000 ) == 333 );
-    REQUIRE( std::floor( liquid_cold.temperature / 100000 ) == 276 );
-    REQUIRE( liquid_hot.has_flag( flag_id( "HOT" ) ) );
-    REQUIRE( liquid_cold.has_flag( flag_id( "COLD" ) ) );
+    REQUIRE( units::to_kelvin( liquid_hot.temperature ) == Approx( 333.15 ) );
+    REQUIRE( units::to_kelvin( liquid_cold.temperature ) == Approx( 276.15 ) );
+    REQUIRE( liquid_hot.has_flag( json_flag_HOT ) );
+    REQUIRE( liquid_cold.has_flag( json_flag_COLD ) );
 
     SECTION( "liquids at the same temperature can stack together" ) {
         CHECK( liquid_cold.stacks_with( liquid_cold ) );
@@ -234,7 +258,7 @@ static void assert_minimum_length_to_volume_ratio( const item &target )
     CHECK( units::to_millimeter( target.length() ) >= minimal_diameter * 10.0 );
 }
 
-TEST_CASE( "item length sanity check", "[item]" )
+TEST_CASE( "item_length_sanity_check", "[item]" )
 {
     for( const itype *type : item_controller->all() ) {
         const item sample( type, calendar::turn_zero, item::solitary_tag {} );
@@ -242,7 +266,7 @@ TEST_CASE( "item length sanity check", "[item]" )
     }
 }
 
-TEST_CASE( "corpse length sanity check", "[item]" )
+TEST_CASE( "corpse_length_sanity_check", "[item]" )
 {
     for( const mtype &type : MonsterGenerator::generator().get_all_mtypes() ) {
         const item sample = item::make_corpse( type.id );
@@ -272,12 +296,12 @@ static void check_spawning_in_container( const std::string &item_type )
     }
 }
 
-TEST_CASE( "items spawn in their default containers", "[item]" )
+TEST_CASE( "items_spawn_in_their_default_containers", "[item]" )
 {
     check_spawning_in_container( "water" );
     check_spawning_in_container( "gunpowder" );
     check_spawning_in_container( "nitrox" );
-    check_spawning_in_container( "ammonia" );
+    check_spawning_in_container( "ammonia_hydroxide" );
     check_spawning_in_container( "detergent" );
     check_spawning_in_container( "pale_ale" );
     check_spawning_in_container( "single_malt_whiskey" );
@@ -285,4 +309,611 @@ TEST_CASE( "items spawn in their default containers", "[item]" )
     check_spawning_in_container( "chem_muriatic_acid" );
     check_spawning_in_container( "chem_black_powder" );
     check_spawning_in_container( "software_useless" );
+}
+
+TEST_CASE( "item_variables_round-trip_accurately", "[item]" )
+{
+    item i( "water" );
+    i.set_var( "A", 17 );
+    CHECK( i.get_var( "A", 0 ) == 17 );
+    i.set_var( "B", 0.125 );
+    CHECK( i.get_var( "B", 0.0 ) == 0.125 );
+    i.set_var( "C", tripoint( 2, 3, 4 ) );
+    CHECK( i.get_var( "C", tripoint() ) == tripoint( 2, 3, 4 ) );
+}
+
+TEST_CASE( "water_affect_items_while_swimming_check", "[item][water][swimming]" )
+{
+    avatar &guy = get_avatar();
+    clear_avatar();
+
+    GIVEN( "an item with flag WATER_DISSOLVE" ) {
+
+        REQUIRE( item( "aspirin" ).has_flag( flag_WATER_DISSOLVE ) );
+
+        WHEN( "item in hand" ) {
+            guy.unwield();
+            guy.worn.clear();
+
+            item aspirin( "aspirin" );
+
+            REQUIRE( guy.wield( aspirin ) );
+
+            THEN( "should dissolve in water" ) {
+                g->water_affect_items( guy );
+                CHECK_FALSE( guy.has_item_with_flag( flag_WATER_DISSOLVE ) );
+            }
+        }
+
+        WHEN( "item in backpack" ) {
+            guy.unwield();
+            guy.worn.clear();
+
+            item aspirin( "aspirin" );
+            item backpack( "backpack" );
+
+            backpack.put_in( aspirin, item_pocket::pocket_type::CONTAINER );
+
+            REQUIRE( guy.wear_item( backpack ) );
+
+            THEN( "should dissolve in water" ) {
+                g->water_affect_items( guy );
+                CHECK_FALSE( guy.has_item_with_flag( flag_WATER_DISSOLVE ) );
+            }
+        }
+
+        WHEN( "item in small plastic bottle" ) {
+            guy.unwield();
+            guy.worn.clear();
+
+            item aspirin( "aspirin" );
+            item bottle_small( "bottle_plastic_small" );
+
+            bottle_small.put_in( aspirin, item_pocket::pocket_type::CONTAINER );
+
+            REQUIRE( guy.wield( bottle_small ) );
+
+            THEN( "should not dissolve in water" ) {
+                g->water_affect_items( guy );
+                CHECK( guy.has_item_with_flag( flag_WATER_DISSOLVE ) );
+            }
+        }
+
+        WHEN( "item in backpack inside duffel bag" ) {
+            guy.unwield();
+            guy.worn.clear();
+
+            item aspirin( "aspirin" );
+            item backpack( "backpack" );
+            item duffelbag( "duffelbag" );
+
+            backpack.put_in( aspirin, item_pocket::pocket_type::CONTAINER );
+            duffelbag.put_in( backpack, item_pocket::pocket_type::CONTAINER );
+
+            REQUIRE( guy.wear_item( duffelbag ) );
+
+            THEN( "should dissolve in water" ) {
+                g->water_affect_items( guy );
+                CHECK_FALSE( guy.has_item_with_flag( flag_WATER_DISSOLVE ) );
+            }
+        }
+
+        WHEN( "item in backpack inside body bag" ) {
+            guy.unwield();
+            guy.worn.clear();
+
+            item aspirin( "aspirin" );
+            item backpack( "backpack" );
+            item body_bag( "test_waterproof_bag" );
+
+            backpack.put_in( aspirin, item_pocket::pocket_type::CONTAINER );
+            body_bag.put_in( backpack, item_pocket::pocket_type::CONTAINER );
+
+            REQUIRE( guy.wield( body_bag ) );
+
+            THEN( "should not dissolve in water" ) {
+                g->water_affect_items( guy );
+                CHECK( guy.has_item_with_flag( flag_WATER_DISSOLVE ) );
+            }
+        }
+    }
+
+    GIVEN( "an item with flag WATER_BREAK" ) {
+
+        REQUIRE( itype_test_smart_phone->has_flag( flag_WATER_BREAK ) );
+
+        WHEN( "item in hand" ) {
+            guy.unwield();
+            guy.worn.clear();
+
+            item smart_phone( itype_test_smart_phone );
+
+            REQUIRE( guy.wield( smart_phone ) );
+
+            THEN( "should be broken by water" ) {
+                g->water_affect_items( guy );
+                CHECK( guy.has_item_with_flag( flag_ITEM_BROKEN ) );
+            }
+        }
+
+        WHEN( "item in backpack" ) {
+            guy.unwield();
+            guy.worn.clear();
+
+            item smart_phone( itype_test_smart_phone );
+            item backpack( itype_test_backpack );
+
+            backpack.put_in( smart_phone, item_pocket::pocket_type::CONTAINER );
+
+            REQUIRE( guy.wield( backpack ) );
+
+            THEN( "should be broken by water" ) {
+                g->water_affect_items( guy );
+                CHECK( guy.has_item_with_flag( flag_ITEM_BROKEN ) );
+            }
+        }
+
+        WHEN( "item in body bag" ) {
+            guy.unwield();
+            guy.worn.clear();
+
+            item smart_phone( itype_test_smart_phone );
+            item body_bag( "test_waterproof_bag" );
+
+            body_bag.put_in( smart_phone, item_pocket::pocket_type::CONTAINER );
+
+            REQUIRE( guy.wield( body_bag ) );
+
+            THEN( "should not be broken by water" ) {
+                g->water_affect_items( guy );
+                CHECK_FALSE( guy.has_item_with_flag( flag_ITEM_BROKEN ) );
+            }
+        }
+
+        WHEN( "item in backpack inside duffel bag" ) {
+            guy.unwield();
+            guy.worn.clear();
+
+            item smart_phone( itype_test_smart_phone );
+            item backpack( itype_test_backpack );
+            item duffelbag( itype_test_duffelbag );
+
+            backpack.put_in( smart_phone, item_pocket::pocket_type::CONTAINER );
+            duffelbag.put_in( backpack, item_pocket::pocket_type::CONTAINER );
+
+            REQUIRE( guy.wield( duffelbag ) );
+
+            THEN( "should be broken by water" ) {
+                g->water_affect_items( guy );
+                CHECK( guy.has_item_with_flag( flag_ITEM_BROKEN ) );
+            }
+        }
+
+        WHEN( "item in backpack inside body bag" ) {
+            guy.unwield();
+            guy.worn.clear();
+
+            item smart_phone( itype_test_smart_phone );
+            item backpack( itype_test_backpack );
+            item body_bag( itype_test_waterproof_bag );
+
+            backpack.put_in( smart_phone, item_pocket::pocket_type::CONTAINER );
+            body_bag.put_in( backpack, item_pocket::pocket_type::CONTAINER );
+
+            REQUIRE( guy.wield( body_bag ) );
+
+            THEN( "should not be broken by water" ) {
+                g->water_affect_items( guy );
+                CHECK_FALSE( guy.has_item_with_flag( flag_ITEM_BROKEN ) );
+            }
+        }
+    }
+
+    GIVEN( "an item with flag WATER_BREAK_ACTIVE" ) {
+
+        REQUIRE( itype_test_mp3->has_flag( flag_WATER_BREAK_ACTIVE ) );
+
+        WHEN( "item in hand" ) {
+            guy.unwield();
+            guy.worn.clear();
+
+            item mp3( itype_test_mp3 );
+
+            REQUIRE( guy.wield( mp3 ) );
+
+            THEN( "should get wet from water" ) {
+                g->water_affect_items( guy );
+                CHECK( guy.get_wielded_item()->wetness > 0 );
+            }
+        }
+
+        WHEN( "item in backpack" ) {
+            guy.unwield();
+            guy.worn.clear();
+
+            item mp3( itype_test_mp3 );
+            item backpack( itype_test_backpack );
+
+            backpack.put_in( mp3, item_pocket::pocket_type::CONTAINER );
+
+            REQUIRE( guy.wield( backpack ) );
+
+            THEN( "should get wet from water" ) {
+                g->water_affect_items( guy );
+                const item *test_item = guy.get_wielded_item()->all_items_top().front();
+                REQUIRE( test_item->typeId() == itype_test_mp3 );
+                CHECK( test_item->wetness > 0 );
+            }
+        }
+
+        WHEN( "item in body bag" ) {
+            guy.unwield();
+            guy.worn.clear();
+
+            item mp3( itype_test_mp3 );
+            item body_bag( itype_test_waterproof_bag );
+
+            body_bag.put_in( mp3, item_pocket::pocket_type::CONTAINER );
+
+            REQUIRE( guy.wield( body_bag ) );
+
+            THEN( "should not be broken by water" ) {
+                g->water_affect_items( guy );
+                const item *test_item = guy.get_wielded_item()->all_items_top().front();
+                REQUIRE( test_item->typeId() == itype_test_mp3 );
+                CHECK( test_item->wetness == 0 );
+            }
+        }
+
+        WHEN( "item in backpack inside duffel bag" ) {
+            guy.unwield();
+            guy.worn.clear();
+
+            item mp3( itype_test_mp3 );
+            item backpack( itype_test_backpack );
+            item duffelbag( itype_test_duffelbag );
+
+            backpack.put_in( mp3, item_pocket::pocket_type::CONTAINER );
+            duffelbag.put_in( backpack, item_pocket::pocket_type::CONTAINER );
+
+            REQUIRE( guy.wield( duffelbag ) );
+
+            THEN( "should get wet from water" ) {
+                g->water_affect_items( guy );
+                const item *test_item = guy.get_wielded_item()->all_items_top().front()->all_items_top().front();
+                REQUIRE( test_item->typeId() == itype_test_mp3 );
+                CHECK( test_item->wetness > 0 );
+            }
+        }
+
+        WHEN( "item in backpack inside body bag" ) {
+            guy.unwield();
+            guy.worn.clear();
+
+            item mp3( itype_test_mp3 );
+            item backpack( itype_test_backpack );
+            item body_bag( itype_test_waterproof_bag );
+
+            backpack.put_in( mp3, item_pocket::pocket_type::CONTAINER );
+            body_bag.put_in( backpack, item_pocket::pocket_type::CONTAINER );
+
+            REQUIRE( guy.wield( body_bag ) );
+
+            THEN( "should not be broken by water" ) {
+                g->water_affect_items( guy );
+                const item *test_item = guy.get_wielded_item()->all_items_top().front()->all_items_top().front();
+                REQUIRE( test_item->typeId() == itype_test_mp3 );
+                CHECK( test_item->wetness == 0 );
+            }
+        }
+
+        WHEN( "item in hand" ) {
+            guy.unwield();
+            guy.worn.clear();
+
+            item mp3( itype_test_mp3 );
+
+            REQUIRE( guy.wield( mp3 ) );
+
+            THEN( "should be wet for around 8664 seconds" ) {
+                g->water_affect_items( guy );
+                CHECK( guy.get_wielded_item()->wetness == Approx( 8664 ).margin( 20 ) );
+            }
+        }
+
+        WHEN( "item in hand" ) {
+            guy.unwield();
+            guy.worn.clear();
+
+            item mp3( itype_test_mp3 );
+
+            REQUIRE( guy.wield( mp3 ) );
+
+            THEN( "gets wet five times in a row " ) {
+                g->water_affect_items( guy );
+                g->water_affect_items( guy );
+                g->water_affect_items( guy );
+                g->water_affect_items( guy );
+                g->water_affect_items( guy );
+                AND_THEN( "should be wet for around 43320 seconds" ) {
+                    CHECK( guy.get_wielded_item()->wetness == Approx( 43320 ).margin( 100 ) );
+                }
+            }
+        }
+    }
+
+    GIVEN( "a towel" ) {
+
+        WHEN( "item in hand" ) {
+            guy.unwield();
+            guy.worn.clear();
+
+            item towel( "towel" );
+
+            REQUIRE( guy.wield( towel ) );
+
+            THEN( "should get wet in water" ) {
+                g->water_affect_items( guy );
+                CHECK( guy.has_item_with_flag( flag_WET ) );
+            }
+        }
+
+        WHEN( "wearing item" ) {
+            guy.unwield();
+            guy.worn.clear();
+
+            item towel( "towel" );
+
+            REQUIRE( guy.wear_item( towel ) );
+
+            THEN( "should get wet in water" ) {
+                g->water_affect_items( guy );
+                CHECK( guy.has_item_with_flag( flag_WET ) );
+            }
+        }
+
+        WHEN( "inside a backpack" ) {
+            guy.unwield();
+            guy.worn.clear();
+
+            item towel( "towel" );
+            item backpack( "backpack" );
+
+            backpack.put_in( towel, item_pocket::pocket_type::CONTAINER );
+
+            REQUIRE( guy.wield( backpack ) );
+
+            THEN( "should get wet in water" ) {
+                g->water_affect_items( guy );
+                CHECK( guy.has_item_with_flag( flag_WET ) );
+            }
+        }
+
+        WHEN( "inside a body bag" ) {
+            guy.unwield();
+            guy.worn.clear();
+
+            item towel( "towel" );
+            item body_bag( "test_waterproof_bag" );
+
+            body_bag.put_in( towel, item_pocket::pocket_type::CONTAINER );
+
+            REQUIRE( guy.wield( body_bag ) );
+
+            THEN( "should not get wet in water" ) {
+                g->water_affect_items( guy );
+                CHECK_FALSE( guy.has_item_with_flag( flag_WET ) );
+            }
+        }
+    }
+}
+
+static float max_density_for_mats( const std::map<material_id, int> &mats, float total_size )
+{
+    REQUIRE( !mats.empty() );
+
+    float max_density = 0.f;
+
+    for( const auto &m : mats ) {
+        max_density += m.first->density() * ( m.second  / total_size );
+    }
+
+    return max_density;
+}
+
+static float item_density( const item &target )
+{
+    return static_cast<float>( to_gram( target.weight() ) ) / static_cast<float>( to_milliliter(
+                target.volume() ) );
+}
+
+static bool assert_maximum_density_for_material( const item &target )
+{
+    if( to_milliliter( target.volume() ) == 0 ) {
+        return false;
+    }
+    const std::map<material_id, int> &mats = target.made_of();
+    if( !mats.empty() && test_data::known_bad.count( target.typeId() ) == 0 ) {
+        const float max_density = max_density_for_mats( mats, target.type->mat_portion_total );
+        CAPTURE( target.typeId(), target.weight(), target.volume() );
+        CHECK( item_density( target ) <= max_density );
+
+        return item_density( target ) > max_density;
+    }
+
+    // fallback return
+    return false;
+}
+
+TEST_CASE( "item_material_density_sanity_check", "[item]" )
+{
+    std::vector<const itype *> all_items = item_controller->all();
+
+    // only allow so many failures before stopping
+    int number_of_failures = 0;
+
+    for( const itype *type : all_items ) {
+        const item sample( type, calendar::turn_zero, item::solitary_tag{} );
+        if( assert_maximum_density_for_material( sample ) ) {
+            number_of_failures++;
+            if( number_of_failures > 20 ) {
+                break;
+            }
+        }
+    }
+}
+
+TEST_CASE( "item_material_density_blacklist_is_pruned", "[item]" )
+{
+    for( const itype_id &bad : test_data::known_bad ) {
+        if( !bad.is_valid() ) {
+            continue;
+        }
+        const item target( bad, calendar::turn_zero, item::solitary_tag{} );
+        if( to_milliliter( target.volume() ) == 0 ) {
+            continue;
+        }
+        const std::map<material_id, int> &mats = target.made_of();
+        if( !mats.empty() ) {
+            INFO( string_format( "%s had its density fixed, remove it from the list in data/mods/TEST_DATA/known_bad_density.json",
+                                 bad.str() ) );
+            const float max_density = max_density_for_mats( mats, bad->mat_portion_total );
+            CHECK( item_density( target ) > max_density );
+        }
+    }
+}
+
+TEST_CASE( "armor_entry_consolidate_check", "[item][armor]" )
+{
+    item test_consolidate( "test_consolidate" );
+
+    //check this item has a single armor entry, not 3 like is written in the json explicitly
+
+    CHECK( test_consolidate.find_armor_data()->sub_data.size() == 1 );
+}
+
+TEST_CASE( "module_inheritance", "[item][armor]" )
+{
+    avatar &guy = get_avatar();
+    clear_avatar();
+    guy.set_body();
+    guy.clear_mutations();
+    guy.worn.clear();
+
+    item test_exo( "test_modular_exosuit" );
+    item test_module( "test_exo_lense_module" );
+
+    test_exo.force_insert_item( test_module, item_pocket::pocket_type::CONTAINER );
+
+    guy.worn.wear_item( guy, test_exo, false, false, false );
+
+    CHECK( guy.worn.worn_with_flag( json_flag_FIX_NEARSIGHT ) );
+
+    clear_avatar();
+    item miner_hat( "miner_hat" );
+    item ear_muffs( "attachable_ear_muffs" );
+    REQUIRE( miner_hat.put_in( ear_muffs, item_pocket::pocket_type::CONTAINER ).success() );
+    REQUIRE( !miner_hat.has_flag( json_flag_DEAF ) );
+    guy.wear_item( miner_hat );
+    item_location worn_hat = guy.worn.top_items_loc( guy ).front();
+    item_location worn_muffs( worn_hat, &worn_hat->only_item() );
+    avatar_action::use_item( guy, worn_muffs, "transform" );
+    CHECK( worn_hat->has_flag( json_flag_DEAF ) );
+}
+
+TEST_CASE( "rigid_armor_compliance", "[item][armor]" )
+{
+    avatar &guy = get_avatar();
+    clear_avatar();
+    // check if you can swap a rigid armor
+    item test_armguard( "test_armguard" );
+    REQUIRE( guy.wield( test_armguard ) );
+
+    REQUIRE( guy.wear( guy.used_weapon(), false ) );
+
+    CHECK( guy.worn.top_items_loc( guy ).front().get_item()->get_side() == side::LEFT );
+
+    guy.change_side( *guy.worn.top_items_loc( guy ).front().get_item() );
+
+    CHECK( guy.worn.top_items_loc( guy ).front().get_item()->get_side() == side::RIGHT );
+
+    // check if you can't wear 3 rigid armors
+    clear_avatar();
+
+    item first_test_armguard( "test_armguard" );
+    REQUIRE( guy.wield( first_test_armguard ) );
+    REQUIRE( guy.wear( guy.used_weapon(), false ) );
+
+    item second_test_armguard( "test_armguard" );
+    REQUIRE( guy.wield( second_test_armguard ) );
+    REQUIRE( guy.wear( guy.used_weapon(), false ) );
+
+    item third_test_armguard( "test_armguard" );
+    REQUIRE( guy.wield( third_test_armguard ) );
+    REQUIRE( !guy.wear( guy.used_weapon(), false ) );
+}
+
+TEST_CASE( "rigid_splint_compliance", "[item][armor]" )
+{
+    avatar &guy = get_avatar();
+    clear_avatar();
+
+    item test_armguard( "test_armguard" );
+    item second_test_armguard( "test_armguard" );
+    item splint( "arm_splint" );
+    item second_splint( "arm_splint" );
+    item third_splint( "arm_splint" );
+
+    // check if you can wear a splint
+    clear_avatar();
+
+    guy.set_part_hp_cur( bodypart_id( "arm_r" ), 0 );
+    REQUIRE( guy.wield( splint ) );
+    REQUIRE( guy.wear( guy.used_weapon(), false ) );
+
+    // check if you cannot wear a splint if something rigid is on that arm
+    clear_avatar();
+
+    REQUIRE( guy.wield( test_armguard ) );
+    guy.set_part_hp_cur( bodypart_id( "arm_r" ), 0 );
+    REQUIRE( guy.wear( guy.used_weapon(), false ) );
+
+    CHECK( guy.worn.top_items_loc( guy ).front().get_item()->get_side() == side::LEFT );
+    // swap side to the broken arm side
+    guy.change_side( *guy.worn.top_items_loc( guy ).front().get_item() );
+    // should fail to wear
+    REQUIRE( guy.wield( second_splint ) );
+    REQUIRE( !guy.wear( guy.used_weapon(), false ) );
+
+    // check if you can wear a splint if nothing rigid is on that arm
+    clear_avatar();
+
+    REQUIRE( guy.wield( second_test_armguard ) );
+    guy.set_part_hp_cur( bodypart_id( "arm_r" ), 0 );
+    REQUIRE( guy.wear( guy.used_weapon(), false ) );
+
+    CHECK( guy.worn.top_items_loc( guy ).front().get_item()->get_side() == side::LEFT );
+
+    // should be able to wear the arm is open
+    REQUIRE( guy.wield( third_splint ) );
+    REQUIRE( guy.wear( guy.used_weapon(), false ) );
+}
+
+TEST_CASE( "item_single_type_contents", "[item]" )
+{
+    item walnut( "walnut" );
+    item nail( "nail" );
+    item bag( "bag_plastic" );
+    REQUIRE( bag.get_category_of_contents().id == item_category_container );
+    int const num = GENERATE( 1, 2 );
+    bool ret = true;
+    for( int i = 0; i < num; i++ ) {
+        ret &= bag.put_in( walnut, item_pocket::pocket_type::CONTAINER ).success();
+    }
+    REQUIRE( ret );
+    CAPTURE( num, bag.display_name() );
+    CHECK( bag.get_category_of_contents() == *item_category_food );
+    REQUIRE( nail.get_category_of_contents().id != walnut.get_category_of_contents().id );
+    REQUIRE( bag.put_in( nail, item_pocket::pocket_type::CONTAINER ).success() );
+    CHECK( bag.get_category_of_contents().id == item_category_container );
 }

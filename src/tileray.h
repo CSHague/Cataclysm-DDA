@@ -47,10 +47,6 @@ class tileray
         int dy() const;       // return dy of last advance (-1 to 1)
         units::angle dir() const;      // return direction of ray
         int quadrant() const;
-        int dir4() const;     // return 4-sided direction (0 = east, 1 = south, 2 = west, 3 = north)
-        int dir8() const;     // return 8-sided direction (0 = east, 1 = southeast, 2 = south ...)
-        // convert certain symbols from north-facing variant into current dir facing
-        int dir_symbol( int sym ) const;
 
         /** convert to a string representation of the azimuth from north, in integer degrees */
         std::string to_string_azimuth_from_north() const;
@@ -63,7 +59,7 @@ class tileray
 
         void advance( int num = 1 ); // move to the next tile (calculate last dx, dy)
         void clear_advance(); // clear steps, leftover, last_dx, and last_dy
-        bool end();      // do we reach the end of (dx,dy) defined ray?
+        int get_steps() const;  // how many steps we advanced
 };
 
 #endif // CATA_SRC_TILERAY_H

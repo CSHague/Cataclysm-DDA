@@ -17,7 +17,7 @@
 #include <vector>
 
 #include "calendar.h"
-#include "catch/catch.hpp"
+#include "cata_catch.h"
 #include "coordinates.h"
 #ifndef _WIN32
 #include <unistd.h>
@@ -26,8 +26,10 @@
 #include "avatar.h"
 #include "cached_options.h"
 #include "cata_assert.h"
+#include "cata_scope_helpers.h"
 #include "cata_utility.h"
 #include "color.h"
+#include "compatibility.h"
 #include "debug.h"
 #include "filesystem.h"
 #include "game.h"
@@ -40,11 +42,12 @@
 #include "overmap.h"
 #include "overmapbuffer.h"
 #include "path_info.h"
-#include "pldata.h"
 #include "rng.h"
 #include "type_id.h"
 #include "weather.h"
 #include "worldfactory.h"
+
+static const mod_id MOD_INFORMATION_dda( "dda" );
 
 using name_value_pair_t = std::pair<std::string, std::string>;
 using option_overrides_t = std::vector<name_value_pair_t>;
@@ -88,7 +91,7 @@ static void init_global_game_state( const std::vector<mod_id> &mods,
 {
     if( !assure_dir_exist( user_dir ) ) {
         // NOLINTNEXTLINE(misc-static-assert,cert-dcl03-c)
-        cata_assert( !"Unable to make user_dir directory.  Check permissions." );
+        cata_fatal( "Unable to make user_dir directory '%s'.  Check permissions.", user_dir );
     }
 
     PATH_INFO::init_base_path( "" );
@@ -97,17 +100,17 @@ static void init_global_game_state( const std::vector<mod_id> &mods,
 
     if( !assure_dir_exist( PATH_INFO::config_dir() ) ) {
         // NOLINTNEXTLINE(misc-static-assert,cert-dcl03-c)
-        cata_assert( !"Unable to make config directory.  Check permissions." );
+        cata_fatal( "Unable to make config directory.  Check permissions." );
     }
 
     if( !assure_dir_exist( PATH_INFO::savedir() ) ) {
         // NOLINTNEXTLINE(misc-static-assert,cert-dcl03-c)
-        cata_assert( !"Unable to make save directory.  Check permissions." );
+        cata_fatal( "Unable to make save directory.  Check permissions." );
     }
 
     if( !assure_dir_exist( PATH_INFO::templatedir() ) ) {
         // NOLINTNEXTLINE(misc-static-assert,cert-dcl03-c)
-        cata_assert( !"Unable to make templates directory.  Check permissions." );
+        cata_fatal( "Unable to make templates directory.  Check permissions." );
     }
 
     get_options().init();
@@ -132,12 +135,13 @@ static void init_global_game_state( const std::vector<mod_id> &mods,
 
     world_generator->set_active_world( nullptr );
     world_generator->init();
+    // Using unicode characters in the world name to test path encoding
 #ifndef _WIN32
-    const std::string test_world_name = "Test World " + std::to_string( getpid() );
+    const std::string test_world_name = "Test World 测试世界 " + std::to_string( getpid() );
 #else
-    const std::string test_world_name = "Test World";
+    const std::string test_world_name = "Test World 测试世界";
 #endif
-    WORLDPTR test_world = world_generator->make_new_world( test_world_name, mods );
+    WORLD *test_world = world_generator->make_new_world( test_world_name, mods );
     cata_assert( test_world != nullptr );
     world_generator->set_active_world( test_world );
     cata_assert( world_generator->active_world != nullptr );
@@ -161,6 +165,7 @@ static void init_global_game_state( const std::vector<mod_id> &mods,
     map &here = get_map();
     // TODO: fix point types
     here.load( tripoint_abs_sm( here.get_abs_sub() ), false );
+    get_avatar().move_to( tripoint_abs_ms( tripoint_zero ) );
 
     get_weather().update_weather();
 }
@@ -248,11 +253,16 @@ struct CataListener : Catch::TestEventListenerBase {
 
     void sectionEnded( Catch::SectionStats const &sectionStats ) override {
         TestEventListenerBase::sectionEnded( sectionStats );
-        if( !sectionStats.assertions.allPassed() ) {
+        if( !sectionStats.assertions.allPassed() ||
+            m_config->includeSuccessfulResults() ) {
             std::vector<std::pair<std::string, std::string>> messages =
                         Messages::recent_messages( 0 );
             if( !messages.empty() ) {
-                stream << "Log messages during failed test:\n";
+                if( !sectionStats.assertions.allPassed() ) {
+                    stream << "Log messages during failed test:\n";
+                } else {
+                    stream << "Log messages during successful test:\n";
+                }
             }
             for( const std::pair<std::string, std::string> &message : messages ) {
                 stream << message.first << ": " << message.second << '\n';
@@ -281,13 +291,18 @@ CATCH_REGISTER_LISTENER( CataListener )
 
 int main( int argc, const char *argv[] )
 {
+    reset_floating_point_mode();
+    on_out_of_scope json_member_reporting_guard{ [] {
+            // Disable reporting unvisited members if stack unwinding leaves main early.
+            Json::globally_report_unvisited_members( false );
+        } };
     Catch::Session session;
 
     std::vector<const char *> arg_vec( argv, argv + argc );
 
     std::vector<mod_id> mods = extract_mod_selection( arg_vec );
-    if( std::find( mods.begin(), mods.end(), mod_id( "dda" ) ) == mods.end() ) {
-        mods.insert( mods.begin(), mod_id( "dda" ) ); // @todo move unit test items to core
+    if( std::find( mods.begin(), mods.end(), MOD_INFORMATION_dda ) == mods.end() ) {
+        mods.insert( mods.begin(), MOD_INFORMATION_dda ); // @todo move unit test items to core
     }
 
     option_overrides_t option_overrides_for_test_suite = extract_option_overrides( arg_vec );
@@ -305,6 +320,21 @@ int main( int argc, const char *argv[] )
         error_log_format = error_log_format_t::human_readable;
     } else {
         printf( "Unknown format %s", error_fmt.c_str() );
+        return EXIT_FAILURE;
+    }
+
+    std::string check_plural_str = extract_argument( arg_vec, "--check-plural=" );
+    if( check_plural_str == "none" ) {
+        // NOLINTNEXTLINE(cata-tests-must-restore-global-state)
+        check_plural = check_plural_t::none;
+    } else if( check_plural_str == "certain" || check_plural_str.empty() ) {
+        // NOLINTNEXTLINE(cata-tests-must-restore-global-state)
+        check_plural = check_plural_t::certain;
+    } else if( check_plural_str == "possible" ) {
+        // NOLINTNEXTLINE(cata-tests-must-restore-global-state)
+        check_plural = check_plural_t::possible;
+    } else {
+        printf( "Unknown check_plural value %s", check_plural_str.c_str() );
         return EXIT_FAILURE;
     }
 
@@ -354,29 +384,29 @@ int main( int argc, const char *argv[] )
 
     bool error_during_initialization = debug_has_error_been_observed();
 
-    const auto start = std::chrono::system_clock::now();
-    std::time_t start_time = std::chrono::system_clock::to_time_t( start );
-    // Leading newline in case there were debug messages during
-    // initialization.
-    DebugLog( D_INFO, DC_ALL ) << "Starting the actual test at " << std::ctime( &start_time );
+    DebugLog( D_INFO, DC_ALL ) << "Game data loaded, running Catch2 session:" << std::endl;
+    const std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
     result = session.run();
-    const auto end = std::chrono::system_clock::now();
-    std::time_t end_time = std::chrono::system_clock::to_time_t( end );
+    const std::chrono::system_clock::time_point end = std::chrono::system_clock::now();
 
-    auto world_name = world_generator->active_world->world_name;
+    std::string world_name = world_generator->active_world->world_name;
     if( result == 0 || dont_save ) {
         world_generator->delete_world( world_name, true );
     } else {
-        DebugLog( D_INFO, DC_ALL ) << "Test world " << world_name << " left for inspection.";
+        if( g->save() ) {
+            DebugLog( D_INFO, DC_ALL ) << "Test world " << world_name << " left for inspection.";
+        } else {
+            DebugLog( D_ERROR, DC_ALL ) << "Test world " << world_name << " failed to save.";
+            result = 1;
+        }
     }
 
     std::chrono::duration<double> elapsed_seconds = end - start;
-    DebugLog( D_INFO, DC_ALL ) << "Ended test at " << std::ctime( &end_time );
-    DebugLog( D_INFO, DC_ALL ) << "The test took " << elapsed_seconds.count() << " seconds";
+    DebugLog( D_INFO, DC_ALL ) << "Finished in " << elapsed_seconds.count() << " seconds";
 
     if( seed ) {
         // Also print the seed at the end so it can be easily found
-        DebugLog( D_INFO, DC_ALL ) << "Randomness seeded to: " << seed;
+        DebugLog( D_INFO, DC_ALL ) << "Randomness seeded to: " << seed << std::endl;
     }
 
     if( error_during_initialization ) {

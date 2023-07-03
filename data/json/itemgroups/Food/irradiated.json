@@ -28,7 +28,11 @@
       [ "mango", 50 ],
       [ "pomegranate", 50 ],
       [ "papaya", 50 ],
+      [ "guayaba", 50 ],
+      [ "maracuya", 50 ],
       [ "kiwi", 50 ],
+      [ "lulo", 50 ],
+      [ "plantain", 50 ],
       [ "apricot", 50 ],
       [ "lettuce", 50 ],
       [ "cabbage", 50 ],
@@ -42,7 +46,8 @@
       [ "potato", 50 ],
       [ "cucumber", 50 ],
       [ "celery", 50 ],
-      [ "rhubarb", 50 ]
+      [ "rhubarb", 50 ],
+      [ "eggplant", 50 ]
     ]
   },
   {
@@ -74,7 +79,11 @@
       [ "irradiated_mango", 50 ],
       [ "irradiated_pomegranate", 50 ],
       [ "irradiated_papaya", 50 ],
+      [ "irradiated_guayaba", 50 ],
+      [ "irradiated_maracuya", 50 ],
       [ "irradiated_kiwi", 50 ],
+      [ "irradiated_lulo", 50 ],
+      [ "irradiated_plantain", 50 ],
       [ "irradiated_apricot", 50 ],
       [ "irradiated_lettuce", 50 ],
       [ "irradiated_cabbage", 50 ],
@@ -88,7 +97,8 @@
       [ "irradiated_potato", 50 ],
       [ "irradiated_cucumber", 50 ],
       [ "irradiated_celery", 50 ],
-      [ "irradiated_rhubarb", 50 ]
+      [ "irradiated_rhubarb", 50 ],
+      [ "irradiated_eggplant", 50 ]
     ]
   }
 ]

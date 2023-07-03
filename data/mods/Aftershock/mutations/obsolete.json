@@ -59,7 +59,6 @@
     "points": -1,
     "description": "A common flaw in your genemod, brought on by increased muscle mass and bone density.  Moving over rough terrain will slow you down more than normal.",
     "valid": false,
-    "cancels": [ "PARKOUR" ],
     "movecost_obstacle_modifier": 1.15
   },
   {
@@ -69,7 +68,7 @@
     "points": -2,
     "description": "You have problems with eating meat.  It's possible for you to eat it, but you will suffer morale penalties and obtain less nutrition from it.",
     "valid": false,
-    "vitamins_absorb_multi": [ [ "flesh", [ [ "vitA", 0 ], [ "vitB", 0 ], [ "vitC", 0 ], [ "calcium", 0 ], [ "iron", 0 ] ] ] ],
+    "vitamins_absorb_multi": [ [ "flesh", [ [ "vitC", 0 ], [ "calcium", 0 ], [ "iron", 0 ] ] ] ],
     "cancels": [ "CANNIBAL", "MEATARIAN", "ANTIFRUIT" ]
   },
   {
@@ -79,7 +78,6 @@
     "points": -1,
     "description": "Your scent is particularly strong.  It's vaguely offensive to humans, and animals that track your scent will do so more easily.",
     "valid": false,
-    "changes_to": [ "SMELLY2" ],
     "types": [ "SCENT" ],
     "scent_intensity": 800,
     "social_modifiers": { "persuade": -5, "intimidate": -5 }
@@ -116,7 +114,6 @@
     "description": "Short fur has grown to cover your entire body, providing slight protection from cold.",
     "valid": false,
     "types": [ "SKIN" ],
-    "prereqs": [ "SHORTFUR" ],
     "changes_to": [ "MEDIUMFUR" ]
   },
   {
@@ -131,33 +128,11 @@
     "description": "Thick brown fur has grown to cover your entire body, providing a slight protection against attacks, and some protection from cold.",
     "valid": false,
     "types": [ "SKIN" ],
-    "changes_to": [ "MASTODON_FUR" ],
     "prereqs": [ "LIGHTFUR" ],
     "armor": [
       {
         "parts": [ "torso", "arm_l", "arm_r", "hand_l", "hand_r", "leg_l", "leg_r", "foot_l", "foot_r", "mouth", "eyes" ],
         "bash": 2
-      }
-    ]
-  },
-  {
-    "type": "mutation",
-    "id": "MASTODON_FUR",
-    "name": { "str": "Shaggy Fur" },
-    "points": 4,
-    "visibility": 10,
-    "ugliness": 3,
-    "bodytemp_modifiers": [ 750, 1500 ],
-    "bodytemp_sleep": 500,
-    "description": "Your fur has grown out and thickened, providing noticeable protection from attacks as well as considerable insulation.",
-    "valid": false,
-    "types": [ "SKIN" ],
-    "prereqs": [ "MEDIUMFUR" ],
-    "threshreq": [ "THRESH_MASTODON" ],
-    "armor": [
-      {
-        "parts": [ "torso", "arm_l", "arm_r", "hand_l", "hand_r", "leg_l", "leg_r", "foot_l", "foot_r", "mouth", "eyes" ],
-        "bash": 4
       }
     ]
   },
@@ -284,11 +259,10 @@
     "points": -2,
     "visibility": 4,
     "ugliness": 5,
-    "description": "You smell like exactly like a shaggy elephant would, assuming it sweated, which you do.  Monsters that track scent will find you very easily, and humans will react poorly.",
+    "description": "You smell exactly like a shaggy elephant would, assuming it sweated, which you do.  Monsters that track scent will find you very easily, and humans will react poorly.",
     "valid": false,
     "scent_intensity": 1200,
-    "prereqs": [ "ELEPHANTINE_SMELL" ],
-    "leads_to": [ "PHEROMONE_MAMMAL" ]
+    "prereqs": [ "ELEPHANTINE_SMELL" ]
   },
   {
     "type": "mutation",
@@ -312,7 +286,7 @@
     "types": [ "HEALING" ],
     "cancels": [ "LIGHTEATER", "COLDBLOOD", "COLDBLOOD2", "COLDBLOOD3", "COLDBLOOD4", "WAKEFUL", "WAKEFUL2", "WAKEFUL3" ],
     "prereqs": [ "HUNGER" ],
-    "healing_resting": 0.25,
+    "healing_multiplier": 0.25,
     "fatigue_modifier": 0.75,
     "fatigue_regen_modifier": 0.5,
     "metabolism_modifier": 0.4
@@ -336,7 +310,6 @@
     "description": "Ugh, out of water already?  You need about twice the fluids of an average human.",
     "valid": false,
     "prereqs": [ "THIRST" ],
-    "changes_to": [ "THIRST3" ],
     "cancels": [ "NO_THIRST" ],
     "thirst_modifier": 1.0
   },
@@ -361,7 +334,6 @@
     "valid": false,
     "types": [ "RUNNING" ],
     "prereqs": [ "DELIBERATE1" ],
-    "changes_to": [ "PONDEROUS3" ],
     "cancels": [ "QUICK" ],
     "movecost_modifier": 1.25
   }

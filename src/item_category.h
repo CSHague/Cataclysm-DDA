@@ -4,14 +4,13 @@
 
 #include <iosfwd>
 #include <new>
+#include <optional>
 #include <vector>
 
 #include "flat_set.h"
-#include "optional.h"
 #include "translations.h"
 #include "type_id.h"
 
-class JsonIn;
 class JsonObject;
 class item;
 
@@ -22,8 +21,8 @@ struct zone_priority_data {
     bool filthy = false;
     cata::flat_set<flag_id> flags;
 
-    void deserialize( JsonIn &jsin );
-    void load( JsonObject &jo );
+    void deserialize( const JsonObject &jo );
+    void load( const JsonObject &jo );
 };
 /**
  * Contains metadata for one category of items
@@ -39,13 +38,16 @@ class item_category
         translation name_;
         /** Used to sort categories when displaying.  Lower values are shown first. */
         int sort_rank_ = 0;
+        /** Global spawn rate for items from category */
+        float spawn_rate = 1.0f;
 
-        cata::optional<zone_type_id> zone_;
+        std::optional<zone_type_id> zone_;
         std::vector<zone_priority_data> zone_priority_;
 
     public:
         /** Unique ID of this category, used when loading from JSON. */
         item_category_id id;
+        std::vector<std::pair<item_category_id, mod_id>> src;
 
         item_category() = default;
         /**
@@ -60,9 +62,10 @@ class item_category
 
         std::string name() const;
         item_category_id get_id() const;
-        cata::optional<zone_type_id> priority_zone( const item &it ) const;
-        cata::optional<zone_type_id> zone() const;
+        std::optional<zone_type_id> priority_zone( const item &it ) const;
+        std::optional<zone_type_id> zone() const;
         int sort_rank() const;
+        float get_spawn_rate() const;
 
         /**
          * Comparison operators
@@ -80,7 +83,8 @@ class item_category
 
         static const std::vector<item_category> &get_all();
         static void load_item_cat( const JsonObject &jo, const std::string &src );
-        void load( const JsonObject &jo, const std::string & );
+        static void reset();
+        void load( const JsonObject &jo, std::string_view );
 };
 
 #endif // CATA_SRC_ITEM_CATEGORY_H

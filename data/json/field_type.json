@@ -93,8 +93,8 @@
       }
     ],
     "description_affix": "covered_in",
-    "immunity_data": { "traits": [ "WEB_WALKER" ] },
-    "immune_mtypes": [ "mon_spider_web", "mon_spider_web_s" ],
+    "immunity_data": { "flags": [ "WEBWALK" ] },
+    "immune_mtypes": [ "mon_spider_web", "mon_spider_web_s", "mon_mutant_arthropod" ],
     "decrease_intensity_on_contact": true,
     "priority": 2,
     "phase": "solid",
@@ -107,6 +107,61 @@
       "sound": "hsh!",
       "msg_success": "You brush aside some webs."
     },
+    "display_field": true
+  },
+  {
+    "id": "fd_web_nostick",
+    "type": "field_type",
+    "looks_like": "fd_web",
+    "intensity_levels": [ { "name": "thin cobwebs", "sym": "}", "color": "white" }, { "name": "thin webs", "transparent": false } ],
+    "description_affix": "covered_in",
+    "decrease_intensity_on_contact": true,
+    "priority": 2,
+    "phase": "solid",
+    "display_items": true,
+    "bash": {
+      "str_min": 1,
+      "str_max": 3,
+      "sound_vol": 2,
+      "sound_fail_vol": 2,
+      "sound": "hsh!",
+      "msg_success": "You brush aside some webs."
+    },
+    "display_field": true
+  },
+  {
+    "id": "fd_void_web",
+    "type": "field_type",
+    "looks_like": "fd_web",
+    "intensity_levels": [
+      {
+        "name": "starlit webs",
+        "transparent": false,
+        "effects": [
+          { "effect_id": "webbed", "intensity": 1, "min_duration": "1 m", "immune_in_vehicle": true, "is_environmental": false }
+        ]
+      },
+      {
+        "name": "starlit webs",
+        "transparent": false,
+        "effects": [
+          { "effect_id": "webbed", "intensity": 2, "min_duration": "1 m", "immune_in_vehicle": true, "is_environmental": false }
+        ]
+      },
+      {
+        "name": "starlit webs",
+        "transparent": false,
+        "effects": [
+          { "effect_id": "webbed", "intensity": 3, "min_duration": "1 m", "immune_in_vehicle": true, "is_environmental": false }
+        ]
+      }
+    ],
+    "description_affix": "covered_in",
+    "immune_mtypes": [ "mon_void_spider", "mon_void_spider_spiderling" ],
+    "decrease_intensity_on_contact": true,
+    "priority": 2,
+    "phase": "solid",
+    "display_items": false,
     "display_field": true
   },
   {
@@ -138,7 +193,7 @@
       { "name": "pool of acid", "color": "green" }
     ],
     "description_affix": "covered_in",
-    "immunity_data": { "traits": [ "ACIDPROOF" ] },
+    "immunity_data": { "flags": [ "ACID_IMMUNE" ] },
     "underwater_age_speedup": "2 minutes",
     "has_acid": true,
     "priority": 2,
@@ -217,6 +272,7 @@
     "id": "fd_sludge",
     "type": "field_type",
     "legacy_enum_id": 9,
+    "mopsafe": true,
     "intensity_levels": [
       {
         "name": "thin sludge trail",
@@ -241,6 +297,7 @@
     "half_life": "30 minutes",
     "phase": "liquid",
     "display_field": true,
+    "immunity_data": { "flags": [ "SLUDGE_IMMUNE" ] },
     "looks_like": "fd_sap"
   },
   {
@@ -368,6 +425,22 @@
     "display_field": true,
     "looks_like": "f_rubble",
     "legacy_make_rubble": true
+  },
+  {
+    "id": "fd_biolum",
+    "type": "field_type",
+    "intensity_levels": [
+      { "name": "glimmer", "sym": "6", "color": "cyan", "light_emitted": 4 },
+      { "name": "glow", "color": "cyan", "light_emitted": 9 },
+      { "name": "shine", "color": "blue", "light_emitted": 20 }
+    ],
+    "description_affix": "illuminated_by",
+    "has_elec": true,
+    "priority": 4,
+    "half_life": "6 turns",
+    "phase": "plasma",
+    "display_items": false,
+    "display_field": true
   },
   {
     "id": "fd_smoke",
@@ -504,6 +577,62 @@
             "//": "won't be applied inside of vehicles, so it could apply lesser effect",
             "immune_inside_vehicle": true,
             "message": "You feel sick from inhaling the thick toxic gas.",
+            "message_type": "bad"
+          }
+        ]
+      }
+    ],
+    "decay_amount_factor": 5,
+    "gas_absorption_factor": 15,
+    "percent_spread": 30,
+    "outdoor_age_speedup": "3 minutes",
+    "dirty_transparency_cache": true,
+    "has_fume": true,
+    "immunity_data": { "body_part_env_resistance": [ [ "mouth", 15 ] ] },
+    "priority": 8,
+    "half_life": "10 minutes",
+    "phase": "gas",
+    "display_items": false,
+    "display_field": true,
+    "looks_like": "fd_nuke_gas"
+  },
+  {
+    "id": "fd_pollen_triffid",
+    "type": "field_type",
+    "legacy_enum_id": 51,
+    "intensity_levels": [
+      {
+        "name": "hazy cloud",
+        "sym": "8",
+        "dangerous": true,
+        "translucency": 1,
+        "effects": [
+          {
+            "effect_id": "tpollen",
+            "body_part": "mouth",
+            "intensity": 2,
+            "min_duration": "2 minutes",
+            "max_duration": "2 minutes",
+            "immune_inside_vehicle": true,
+            "message": "You feel sick from inhaling the hazy cloud.",
+            "message_type": "bad"
+          }
+        ]
+      },
+      {
+        "name": "triffid pollen",
+        "color": "light_green",
+        "transparent": false,
+        "translucency": 10,
+        "effects": [
+          {
+            "effect_id": "tpollen",
+            "body_part": "mouth",
+            "intensity": 5,
+            "min_duration": "3 minutes",
+            "max_duration": "3 minutes",
+            "immune_inside_vehicle": true,
+            "message": "You feel sick from inhaling the triffid pollen.",
             "message_type": "bad"
           }
         ]
@@ -666,13 +795,20 @@
     "legacy_enum_id": 19,
     "intensity_levels": [
       { "name": "sparks", "sym": "9", "dangerous": true, "light_emitted": 0.01 },
+      { "//": "repeat last entry", "light_emitted": 1 },
+      { "//": "repeat last entry", "light_emitted": 2.5 },
       { "name": "electric crackle", "color": "cyan", "light_emitted": 4 },
-      { "name": "electric cloud", "color": "blue", "light_emitted": 20 }
+      { "//": "repeat last entry", "light_emitted": 7.5 },
+      { "//": "repeat last entry", "light_emitted": 11 },
+      { "name": "electric cloud", "color": "blue", "light_emitted": 14.5 },
+      { "//": "repeat last entry", "light_emitted": 18 },
+      { "//": "repeat last entry", "light_emitted": 21.5 },
+      { "//": "repeat last entry", "light_emitted": 25 }
     ],
     "description_affix": "illuminated_by",
     "has_elec": true,
     "priority": 4,
-    "half_life": "2 turns",
+    "half_life": "4 turns",
     "phase": "plasma",
     "display_items": false,
     "display_field": true
@@ -703,7 +839,7 @@
     ],
     "description_affix": "under",
     "priority": 8,
-    "display_items": false,
+    "display_items": true,
     "display_field": true,
     "looks_like": "fd_smoke"
   },
@@ -839,6 +975,7 @@
       { "//": "repeat last entry" }
     ],
     "description_affix": "illuminated_by",
+    "immunity_data": { "immunity_flags_worn_any": [ [ "sensor", "FLASH_PROTECTION" ], [ "sensor", "BLIND" ] ], "flags": [ "BLIND" ] },
     "priority": 4,
     "half_life": "1 turns",
     "phase": "plasma",
@@ -1006,7 +1143,7 @@
     "intensity_levels": [
       { "name": "swirl of meth smoke", "translucency": 5 },
       { "name": "meth smoke", "color": "light_gray" },
-      { "name": "thick meth  smoke", "color": "dark_gray" }
+      { "name": "thick meth smoke", "color": "dark_gray" }
     ],
     "npc_complain": { "chance": 20, "issue": "meth_smoke", "duration": "30 minutes", "speech": "<meth_smoke>" },
     "decay_amount_factor": 5,
@@ -1039,28 +1176,11 @@
     "looks_like": "fd_smoke"
   },
   {
-    "id": "fd_bees",
-    "type": "field_type",
-    "legacy_enum_id": 37,
-    "intensity_levels": [
-      { "name": "some bees", "sym": "8", "dangerous": true },
-      { "name": "swarm of bees", "color": "light_gray" },
-      { "name": "angry swarm of bees", "color": "dark_gray" }
-    ],
-    "percent_spread": 5,
-    "outdoor_age_speedup": "0 turns",
-    "dirty_transparency_cache": true,
-    "priority": 8,
-    "half_life": "100 minutes",
-    "display_items": false,
-    "display_field": true
-  },
-  {
     "id": "fd_incendiary",
     "type": "field_type",
     "legacy_enum_id": 38,
     "intensity_levels": [
-      { "name": "smoke", "sym": "8", "dangerous": true, "light_emitted": 20, "translucency": 1 },
+      { "name": "smoke", "sym": "8", "color": "light_red", "dangerous": true, "light_emitted": 20, "translucency": 1 },
       { "name": "airborne incendiary", "color": "light_red", "light_emitted": 60, "translucency": 10 },
       {
         "name": "airborne incendiary",
@@ -1204,7 +1324,7 @@
     "outdoor_age_speedup": "5 turns",
     "dirty_transparency_cache": true,
     "has_fume": true,
-    "immunity_data": { "traits": [ "M_IMMUNE" ], "body_part_env_resistance": [ [ "mouth", 15 ], [ "eyes", 15 ] ] },
+    "immunity_data": { "flags": [ "MYCUS_IMMUNE" ], "body_part_env_resistance": [ [ "mouth", 15 ], [ "sensor", 15 ] ] },
     "priority": 8,
     "half_life": "4 minutes",
     "phase": "gas",
@@ -1486,5 +1606,166 @@
     "phase": "liquid",
     "display_field": true,
     "looks_like": "fd_sludge"
+  },
+  {
+    "id": "fd_electricity_unlit",
+    "type": "field_type",
+    "intensity_levels": [
+      { "name": "sparks", "sym": "9", "dangerous": true },
+      { "//": "repeat last entry" },
+      { "//": "repeat last entry" },
+      { "name": "electric crackle", "color": "cyan" },
+      { "//": "repeat last entry" },
+      { "//": "repeat last entry" },
+      { "name": "electric cloud", "color": "blue", "light_emitted": 5 },
+      { "//": "repeat last entry" },
+      { "//": "repeat last entry" },
+      { "//": "repeat last entry" }
+    ],
+    "description_affix": "illuminated_by",
+    "has_elec": true,
+    "priority": 4,
+    "half_life": "4 turns",
+    "phase": "plasma",
+    "display_items": false,
+    "display_field": false,
+    "looks_like": "fd_electricity"
+  },
+  {
+    "id": "fd_direction",
+    "type": "field_type",
+    "intensity_levels": [ { "name": "Detected something", "sym": "." } ],
+    "priority": 10,
+    "half_life": "1 seconds",
+    "accelerated_decay": true,
+    "display_field": true,
+    "display_items": true,
+    "phase": "gas",
+    "looks_like": "footstep"
+  },
+  {
+    "id": "fd_clairvoyant",
+    "type": "field_type",
+    "intensity_levels": [ { "name": "clairvoyance", "sym": "8", "dangerous": false } ],
+    "decay_amount_factor": 5,
+    "gas_absorption_factor": 12,
+    "dirty_transparency_cache": true,
+    "outdoor_age_speedup": "0 turns",
+    "priority": 8,
+    "half_life": "1 seconds",
+    "phase": "solid",
+    "display_field": false
+  },
+  {
+    "id": "fd_bee_swarm",
+    "type": "field_type",
+    "intensity_levels": [
+      { "name": "a few bees", "sym": ".", "dangerous": true, "translucency": 1 },
+      { "name": "a swarm of bees", "color": "yellow", "transparent": true, "translucency": 1 },
+      { "name": "a cloud of bees", "color": "green", "translucency": 0 }
+    ],
+    "decay_amount_factor": 5,
+    "gas_absorption_factor": 15,
+    "percent_spread": 25,
+    "outdoor_age_speedup": "10 minutes",
+    "dirty_transparency_cache": true,
+    "has_fume": true,
+    "immunity_data": { "body_part_env_resistance": [ [ "torso", 5 ] ] },
+    "priority": 3,
+    "half_life": "10 minute",
+    "phase": "gas",
+    "display_items": true,
+    "display_field": true
+  },
+  {
+    "id": "fd_churned_earth",
+    "type": "field_type",
+    "intensity_levels": [ { "name": "churned earth", "sym": "^", "color": "brown", "dangerous": false } ],
+    "half_life": "1 minute",
+    "accelerated_decay": true,
+    "display_field": true,
+    "display_items": true,
+    "phase": "solid",
+    "looks_like": "t_dirtmound"
+  },
+  {
+    "id": "fd_last_known",
+    "type": "field_type",
+    "intensity_levels": [ { "name": "last known position", "dangerous": false } ]
+  },
+  {
+    "id": "fd_nm_monster_gas_1",
+    "//": "Spores cause players to light up",
+    "type": "field_type",
+    "intensity_levels": [
+      {
+        "name": "glowing gas spores",
+        "sym": ".",
+        "dangerous": true,
+        "light_emitted": 10,
+        "translucency": 5,
+        "effects": [
+          {
+            "effect_id": "glowing_gas_cover",
+            "body_part": "torso",
+            "intensity": 4,
+            "min_duration": "1 minutes",
+            "max_duration": "2 minutes"
+          }
+        ]
+      },
+      { "//": "repeat last entry" },
+      { "//": "repeat last entry" }
+    ],
+    "decay_amount_factor": 5,
+    "gas_absorption_factor": 15,
+    "percent_spread": 25,
+    "outdoor_age_speedup": "1 minutes",
+    "dirty_transparency_cache": true,
+    "has_fume": true,
+    "priority": 8,
+    "half_life": "15 minutes",
+    "phase": "gas",
+    "display_items": false,
+    "display_field": true,
+    "looks_like": "fd_tear_gas"
+  },
+  {
+    "id": "fd_nm_monster_gas_2",
+    "//": "Spores, when inhaled, act like smoke",
+    "type": "field_type",
+    "intensity_levels": [
+      {
+        "name": "glowing gas",
+        "sym": ".",
+        "dangerous": true,
+        "light_emitted": 10,
+        "translucency": 5,
+        "effects": [
+          {
+            "effect_id": "glowing_gas",
+            "body_part": "mouth",
+            "intensity": 4,
+            "min_duration": "15 seconds",
+            "max_duration": "25 seconds"
+          }
+        ]
+      },
+      { "//": "repeat last entry" },
+      { "//": "repeat last entry" }
+    ],
+    "decay_amount_factor": 5,
+    "gas_absorption_factor": 15,
+    "percent_spread": 25,
+    "outdoor_age_speedup": "1 minutes",
+    "dirty_transparency_cache": true,
+    "immunity_data": { "body_part_env_resistance": [ [ "mouth", 15 ] ] },
+    "has_fume": true,
+    "priority": 8,
+    "half_life": "15 minutes",
+    "phase": "gas",
+    "display_items": false,
+    "display_field": true,
+    "looks_like": "fd_tear_gas"
   }
 ]

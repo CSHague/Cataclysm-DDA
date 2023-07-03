@@ -6,6 +6,7 @@
 #include <iosfwd>
 #include <map>
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "enum_bitset.h"
@@ -13,7 +14,6 @@
 #include "generic_factory.h"
 #include "mattack_common.h"
 #include "mtype.h"
-#include "optional.h"
 #include "pimpl.h"
 #include "translations.h"
 #include "type_id.h"
@@ -29,6 +29,7 @@ using mon_action_defend = void ( * )( monster &, Creature *, dealt_projectile_at
 
 struct species_type {
     species_id id;
+    std::vector<std::pair<species_id, mod_id>> src;
     bool was_loaded = false;
     translation description;
     translation footsteps;
@@ -45,7 +46,7 @@ struct species_type {
 
     }
 
-    void load( const JsonObject &jo, const std::string &src );
+    void load( const JsonObject &jo, std::string_view src );
 };
 
 class MonsterGenerator
@@ -71,7 +72,7 @@ class MonsterGenerator
 
         void check_monster_definitions() const;
 
-        cata::optional<mon_action_death> get_death_function( const std::string &f ) const;
+        std::optional<mon_action_death> get_death_function( const std::string &f ) const;
         const std::vector<mtype> &get_all_mtypes() const;
         mtype_id get_valid_hallucination() const;
         friend struct mtype;
@@ -84,7 +85,6 @@ class MonsterGenerator
 
         // Init functions
         void init_phases();
-        void init_death();
         void init_attack();
         void init_defense();
 
@@ -108,7 +108,7 @@ class MonsterGenerator
         pimpl<generic_factory<species_type>> mon_species;
         std::vector<mtype_id> hallucination_monsters;
 
-        std::map<std::string, phase_id> phase_map;
+        std::unordered_map<std::string, phase_id> phase_map;
         std::map<std::string, mon_action_death> death_map;
         std::map<std::string, mon_action_defend> defense_map;
         std::map<std::string, mtype_special_attack> attack_map;

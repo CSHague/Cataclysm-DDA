@@ -1,11 +1,11 @@
-#include "catch/catch.hpp"
+#include "cata_catch.h"
 #include "submap.h"
 
 #include "game_constants.h"
 #include "point.h"
 #include "type_id.h"
 
-TEST_CASE( "submap rotation", "[submap]" )
+TEST_CASE( "submap_rotation", "[submap]" )
 {
     // Corners are labelled starting from the upper-left one, clockwise.
     constexpr point corner_1{};
@@ -89,7 +89,7 @@ TEST_CASE( "submap rotation", "[submap]" )
     }
 }
 
-TEST_CASE( "submap rotation2", "[submap]" )
+TEST_CASE( "submap_rotation2", "[submap]" )
 {
     int rotation_turns = GENERATE( 0, 1, 2, 3 );
     CAPTURE( rotation_turns );

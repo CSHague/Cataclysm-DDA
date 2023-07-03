@@ -11,11 +11,10 @@
 #include "sounds.h"
 #include "tileray.h"
 #include "translations.h"
-#include "units.h"
+#include "units_utility.h"
 #include "vehicle.h"
 #include "vpart_position.h"
-
-static const efftype_id effect_harnessed( "harnessed" );
+#include "vpart_range.h"
 
 bool game::grabbed_veh_move( const tripoint &dp )
 {
@@ -31,14 +30,11 @@ bool game::grabbed_veh_move( const tripoint &dp )
         return false;
     }
     const int grabbed_part = grabbed_vehicle_vp->part_index();
-    for( int part_index = 0; part_index < grabbed_vehicle->part_count(); ++part_index ) {
-        monster *mon = grabbed_vehicle->get_monster( part_index );
-        if( mon != nullptr && mon->has_effect( effect_harnessed ) ) {
-            add_msg( m_info, _( "You cannot move this vehicle whilst your %s is harnessed!" ),
-                     mon->get_name() );
-            u.grab( object_type::NONE );
-            return false;
-        }
+    if( monster *mon = grabbed_vehicle->get_harnessed_animal() ) {
+        add_msg( m_info, _( "You cannot move this vehicle whilst your %s is harnessed!" ),
+                 mon->get_name() );
+        u.grab( object_type::NONE );
+        return false;
     }
     const vehicle *veh_under_player = veh_pointer_or_null( m.veh_at( u.pos() ) );
     if( grabbed_vehicle == veh_under_player ) {
@@ -76,19 +72,13 @@ bool game::grabbed_veh_move( const tripoint &dp )
     // Make sure the mass and pivot point are correct
     grabbed_vehicle->invalidate_mass();
 
-    //vehicle movement: strength check
+    //vehicle movement: strength check. very strong humans can move about 2,000 kg in a wheelbarrow.
     int mc = 0;
-    int str_req = grabbed_vehicle->total_mass() / 25_kilogram; //strength required to move vehicle.
+    int str_req = grabbed_vehicle->total_mass() / 100_kilogram; //strength required to move vehicle.
+    // ARM_STR governs dragging heavy things
+    int str = u.get_arm_str();
 
     //if vehicle is rollable we modify str_req based on a function of movecost per wheel.
-
-    // Vehicle just too big to grab & move; 41-45 lets folks have a bit of a window
-    // (Roughly 1.1K kg = danger zone; cube vans are about the max)
-    if( str_req > 45 ) {
-        add_msg( m_info, _( "The %s is too bulky for you to move by hand." ),
-                 grabbed_vehicle->name );
-        return true; // No shoving around an RV.
-    }
 
     const auto &wheel_indices = grabbed_vehicle->wheelcache;
     if( grabbed_vehicle->valid_wheel_config() ) {
@@ -106,28 +96,32 @@ bool game::grabbed_veh_move( const tripoint &dp )
         } else {
             str_req = mc / wheel_indices.size() + 1;
         }
+        //finally, adjust by the off-road coefficient (always 1.0 on a road, as low as 0.1 off road.)
+        str_req /= grabbed_vehicle->k_traction( get_map().vehicle_wheel_traction( *grabbed_vehicle ) );
     } else {
-        str_req++;
-        //if vehicle has no wheels str_req make a noise.
-        if( str_req <= u.get_str() ) {
+        str_req *= 10;
+        //if vehicle has no wheels str_req make a noise. since it has no wheels assume it has the worst off roading possible (0.1)
+        if( str_req <= str ) {
             sounds::sound( grabbed_vehicle->global_pos3(), str_req * 2, sounds::sound_t::movement,
                            _( "a scraping noise." ), true, "misc", "scraping" );
         }
     }
 
     //final strength check and outcomes
-    ///\EFFECT_STR determines ability to drag vehicles
-    if( str_req <= u.get_str() ) {
+    ///\ARM_STR determines ability to drag vehicles
+    if( str_req <= str ) {
         //calculate exertion factor and movement penalty
         ///\EFFECT_STR increases speed of dragging vehicles
-        u.moves -= 100 * str_req / std::max( 1, u.get_str() );
-        const int ex = dice( 1, 3 ) - 1 + str_req;
-        if( ex > u.get_str() + 1 ) {
+        u.moves -= 400 * str_req / std::max( 1, str );
+        ///\EFFECT_STR decreases stamina cost of dragging vehicles
+        u.mod_stamina( -200 * str_req / std::max( 1, str ) );
+        const int ex = dice( 1, 6 ) - 1 + str_req;
+        if( ex > str + 1 ) {
             // Pain and movement penalty if exertion exceeds character strength
             add_msg( m_bad, _( "You strain yourself to move the %s!" ), grabbed_vehicle->name );
             u.moves -= 200;
             u.mod_pain( 1 );
-        } else if( ex >= u.get_str() ) {
+        } else if( ex >= str ) {
             // Movement is slow if exertion nearly equals character strength
             add_msg( _( "It takes some time to move the %s." ), grabbed_vehicle->name );
             u.moves -= 200;
@@ -143,16 +137,22 @@ bool game::grabbed_veh_move( const tripoint &dp )
         tileray mdir;
 
         mdir.init( dir.xy() );
-        grabbed_vehicle->turn( mdir.dir() - grabbed_vehicle->face.dir() );
+        units::angle turn = normalize( mdir.dir() - grabbed_vehicle->face.dir() );
+        if( grabbed_vehicle->is_on_ramp && turn == 180_degrees ) {
+            add_msg( m_bad, _( "The %s can't be turned around while on a ramp." ), grabbed_vehicle->name );
+            return tripoint_zero;
+        }
+        grabbed_vehicle->turn( turn );
         grabbed_vehicle->face = tileray( grabbed_vehicle->turn_dir );
         grabbed_vehicle->precalc_mounts( 1, mdir.dir(), grabbed_vehicle->pivot_point() );
+        grabbed_vehicle->pos -= grabbed_vehicle->pivot_displacement();
 
         // Grabbed part has to stay at distance 1 to the player
         // and in roughly the same direction.
         const tripoint new_part_pos = grabbed_vehicle->global_pos3() +
                                       grabbed_vehicle->part( grabbed_part ).precalc[ 1 ];
         const tripoint expected_pos = u.pos() + dp + from;
-        const tripoint actual_dir = expected_pos - new_part_pos;
+        const tripoint actual_dir = tripoint( ( expected_pos - new_part_pos ).xy(), 0 );
 
         // Set player location to illegal value so it can't collide with vehicle.
         const tripoint player_prev = u.pos();
@@ -184,6 +184,7 @@ bool game::grabbed_veh_move( const tripoint &dp )
     u.grab_point = next_grab;
 
     m.displace_vehicle( *grabbed_vehicle, final_dp_veh );
+    m.rebuild_vehicle_level_caches();
 
     if( grabbed_vehicle ) {
         m.level_vehicle( *grabbed_vehicle );

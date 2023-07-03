@@ -23,13 +23,12 @@ bool string_id<item_category>::is_valid() const
     return item_category_factory.is_valid( *this );
 }
 
-void zone_priority_data::deserialize( JsonIn &jsin )
+void zone_priority_data::deserialize( const JsonObject &jo )
 {
-    JsonObject data = jsin.get_object();
-    load( data );
+    load( jo );
 }
 
-void zone_priority_data::load( JsonObject &jo )
+void zone_priority_data::load( const JsonObject &jo )
 {
     mandatory( jo, was_loaded, "id", id );
     optional( jo, was_loaded, "flags", flags );
@@ -46,13 +45,19 @@ void item_category::load_item_cat( const JsonObject &jo, const std::string &src 
     item_category_factory.load( jo, src );
 }
 
-void item_category::load( const JsonObject &jo, const std::string & )
+void item_category::reset()
+{
+    item_category_factory.reset();
+}
+
+void item_category::load( const JsonObject &jo, const std::string_view )
 {
     mandatory( jo, was_loaded, "id", id );
     mandatory( jo, was_loaded, "name", name_ );
     mandatory( jo, was_loaded, "sort_rank", sort_rank_ );
     optional( jo, was_loaded, "priority_zones", zone_priority_ );
-    optional( jo, was_loaded, "zone", zone_, cata::nullopt );
+    optional( jo, was_loaded, "zone", zone_, std::nullopt );
+    optional( jo, was_loaded, "spawn_rate", spawn_rate, 1.0f );
 }
 
 bool item_category::operator<( const item_category &rhs ) const
@@ -86,12 +91,12 @@ item_category_id item_category::get_id() const
     return id;
 }
 
-cata::optional<zone_type_id> item_category::zone() const
+std::optional<zone_type_id> item_category::zone() const
 {
     return zone_;
 }
 
-cata::optional<zone_type_id> item_category::priority_zone( const item &it ) const
+std::optional<zone_type_id> item_category::priority_zone( const item &it ) const
 {
     for( const zone_priority_data &zone_dat : zone_priority_ ) {
         if( zone_dat.filthy ) {
@@ -106,10 +111,15 @@ cata::optional<zone_type_id> item_category::priority_zone( const item &it ) cons
             return zone_dat.id;
         }
     }
-    return cata::nullopt;
+    return std::nullopt;
 }
 
 int item_category::sort_rank() const
 {
     return sort_rank_;
+}
+
+float item_category::get_spawn_rate() const
+{
+    return spawn_rate;
 }

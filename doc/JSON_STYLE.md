@@ -49,13 +49,13 @@ The formatting tool can be found alongside the releases as `json_formatter.exe` 
 Using `make style-json` will format all files included in the JSON validation test, alternatively:
 ```sh
 # Using git to filter JSON files with uncommitted changes (provided there are no spaces in the file or directory names).
-git diff --name-only '*.json' | xargs -L 1 json_formmater
+git diff --name-only '*.json' | xargs -P 0 -L 1 json_formatter
 
 # Using git to filter modified JSON files in the current branch.
-git diff master --name-only '*.json' | xargs -L 1 json_formmater
+git diff master --name-only '*.json' | xargs -P 0 -L 1 json_formatter
 
 # Per-folder formatting.
-find path/to/desired/folder -name "*.json" -print0 | xargs -0 -L 1 json_formatter
+find path/to/desired/folder -name "*.json" -print0 | xargs -P 0 -0 -L 1 json_formatter
 ```
 ---
 If you're using the Visual Studio solution, you can configure Visual Studio with
@@ -64,7 +64,17 @@ commands to format all of the JSON in the project.
 1. Build the JsonFormatter project by either building the entire solution or
    just that project. This will create a `tools/format/json_formatter.exe`
    binary.
-2. Add a new external tool entry ( `Tools` > `External Tools..` > `Add` ) and
+2. To automatically lint json you need to define an MSBuild variable ( this is similar to setting up ccache in Visual Studio compiling doc ).
+If done correctly then trying to build or run the solution will trigger linter and the `Output` and `Error List` windows will show the linted files if any.
+One of the easier methods to do so is creating a `Directory.Build.props` file in the root of cataclysm project repository with the following contents:
+```xml
+<Project>
+  <PropertyGroup>
+    <CDDA_POST_BUILD_JSON_LINT>true</CDDA_POST_BUILD_JSON_LINT>
+  </PropertyGroup>
+</Project>
+```
+3. To add an entry to manually run the json linter tool; Add a new external tool entry ( `Tools` > `External Tools..` > `Add` ) and
    configure it as follows:
    * Title: `Lint All JSON`
    * Command: `C:\windows\system32\windowspowershell\v1.0\powershell.exe`
@@ -79,3 +89,6 @@ Additionally, you can configure a keybinding for this command by navigating to
 containing `Tools.ExternalCommand` and pick the one that corresponds to the
 position of your command in the list (e.g. `Tools.ExternalCommand1` if it's the
 top item in the list) and then assign shortcut keys to it.
+
+### Visual Studio Code
+If you install the recommended extensions you should have access to the the cdda-toys.cdda-json-formatter which will auto format your json.

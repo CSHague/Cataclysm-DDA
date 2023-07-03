@@ -1,25 +1,5 @@
 [
   {
-    "id": "afs_sungel",
-    "type": "COMESTIBLE",
-    "name": "sungel",
-    "copy-from": "afs_sundew",
-    "description": "Mixed with morphine, this sundew has congealed, and has an immense stimulative and pain-numbing effect.  With sufficient tools, it could be used to create anesthesia.",
-    "stim": 50,
-    "phase": "solid",
-    "charges": 2,
-    "fun": 20,
-    "use_action": {
-      "type": "consume_drug",
-      "activation_message": "Your vision sharpens and your eyes widen as the sungel slams your senses.",
-      "effects": [
-        { "id": "pkill3", "duration": 120 },
-        { "id": "pkill2", "duration": 1200 },
-        { "id": "cough_suppress", "duration": 1000 }
-      ]
-    }
-  },
-  {
     "id": "panacea",
     "type": "COMESTIBLE",
     "comestible_type": "MED",
@@ -45,7 +25,7 @@
   {
     "id": "cream_prot_cold",
     "name": { "str": "heat retention cream" },
-    "description": "Rub this on your skin when you are expecting exposure extreme cold temperatures.  Cannot protect from instant frostbite.  Smells like the inside of a sheep.",
+    "description": "Rub this on your skin when you are expecting exposure to extreme cold temperatures.  Cannot protect from instant frostbite.  Smells like the inside of a sheep.",
     "use_action": { "type": "cast_spell", "spell_id": "cream_prot_cold", "no_fail": true, "level": 0 },
     "type": "COMESTIBLE",
     "weight": "265 g",
@@ -77,5 +57,26 @@
     "flags": [ "EATEN_COLD" ],
     "phase": "solid",
     "price": 5000
+  },
+  {
+    "type": "COMESTIBLE",
+    "id": "atomic_butter",
+    "name": { "str_sp": "atomic butter" },
+    "weight": "14180 mg",
+    "color": "yellow",
+    "spoils_in": "14 days",
+    "comestible_type": "FOOD",
+    "symbol": "%",
+    "quench": -1,
+    "calories": 101,
+    "container": "wrapper",
+    "description": "A yellow stick of milkfat and milk solids, made from cow's milk and the power of the atom.  All radiation levels are confirmed to be in line with background exposure and any cancers later in life have nothing to do with this butter or any products made with this butter.  By consuming this butter you indemnify and hold harmless the Rivtech Corporation, its parent company and subsidiaries and any agents, directors or officers of the Rivtech Corporation from any losses or damages that may occur as a result of consuming this butter in any form or fashion.",
+    "price": 300,
+    "price_postapoc": 750,
+    "material": [ "milk" ],
+    "volume": "500 ml",
+    "charges": 32,
+    "flags": [ "NO_AUTO_CONSUME" ],
+    "fun": -1
   }
 ]

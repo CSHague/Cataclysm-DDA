@@ -1,6 +1,6 @@
 #include "TestsMustRestoreGlobalStateCheck.h"
 
-#include <ClangTidyDiagnosticConsumer.h>
+#include <clang-tidy/ClangTidyDiagnosticConsumer.h>
 #include <clang/Basic/IdentifierTable.h>
 #include <clang/Basic/SourceLocation.h>
 #include <clang/Basic/SourceManager.h>
@@ -20,11 +20,7 @@ class MacroDefinition;
 
 using namespace clang::ast_matchers;
 
-namespace clang
-{
-namespace tidy
-{
-namespace cata
+namespace clang::tidy::cata
 {
 
 TestsMustRestoreGlobalStateCheck::TestsMustRestoreGlobalStateCheck(
@@ -49,10 +45,10 @@ class TestsMustRestoreGlobalStateCallbacks : public PPCallbacks
         TestsMustRestoreGlobalStateCheck *Check;
 };
 
-void TestsMustRestoreGlobalStateCheck::registerPPCallbacks( CompilerInstance &Compiler )
+void TestsMustRestoreGlobalStateCheck::registerPPCallbacks(
+    const SourceManager &, Preprocessor *PP, Preprocessor * )
 {
-    Compiler.getPreprocessor().addPPCallbacks(
-        llvm::make_unique<TestsMustRestoreGlobalStateCallbacks>( this ) );
+    PP->addPPCallbacks( std::make_unique<TestsMustRestoreGlobalStateCallbacks>( this ) );
 }
 
 void TestsMustRestoreGlobalStateCheck::registerMatchers( MatchFinder *Finder )
@@ -142,6 +138,4 @@ void TestsMustRestoreGlobalStateCheck::onEndOfTranslationUnit()
     }
 }
 
-} // namespace cata
-} // namespace tidy
-} // namespace clang
+} // namespace clang::tidy::cata
